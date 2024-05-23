@@ -115,7 +115,7 @@ if st.session_state['products']:
         # Generate report
         st.header('Report')
         st.markdown(f"""
-        <div style="color: black;">
+        <div>
             <h3>Sales Prediction</h3>
             <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
             <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
@@ -123,7 +123,7 @@ if st.session_state['products']:
         """, unsafe_allow_html=True)
         
         st.markdown(f"""
-        <div style="color: black;">
+        <div>
             <h3>Financials</h3>
             <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
             <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
@@ -136,7 +136,7 @@ if st.session_state['products']:
         
         st.subheader('Customer Satisfaction (Top 5 Products)')
         st.markdown(f"""
-        <div style="color: black;">
+        <div>
             <table>
                 <tr>
                     <th>Product Name</th>
