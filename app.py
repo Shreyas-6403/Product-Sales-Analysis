@@ -114,14 +114,22 @@ if st.session_state['products']:
         
         # Generate report
         st.header('Report')
-        st.subheader('Sales Prediction')
-        st.write(f'Sales after a month: ₹{sales_month}')
-        st.write(f'Sales after a year: ₹{sales_year}')
+        st.markdown(f"""
+        <div style="color: black;">
+            <h3>Sales Prediction</h3>
+            <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
+            <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        st.subheader('Financials')
-        st.write(f'Today\'s Total Profit: ₹{total_profit}')
-        st.write(f'Today\'s Total Loss: ₹{total_loss}')
-        st.write(f'Total Earnings: ₹{total_earnings}')
+        st.markdown(f"""
+        <div style="color: black;">
+            <h3>Financials</h3>
+            <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
+            <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
+            <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
+        </div>
+        """, unsafe_allow_html=True)
         
         # Calculate customer satisfaction
         df_numeric = df.drop(columns=['Date'])
