@@ -124,7 +124,9 @@ if st.session_state['products']:
         st.write(f'Total Earnings: ₹{total_earnings}')
         
         # Calculate customer satisfaction
-        top_products = df.groupby('Name').sum().sort_values(by='Quantity', ascending=False).head(5)
+        df_numeric = df.drop(columns=['Date'])
+        top_products = df_numeric.groupby('Name').sum().sort_values(by='Quantity', ascending=False).head(5)
+        
         st.subheader('Customer Satisfaction (Top 5 Products)')
         st.write(top_products[['Quantity']])
 
