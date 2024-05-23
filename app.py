@@ -130,9 +130,11 @@ if st.session_state['products']:
             <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
         </div>
         """, unsafe_allow_html=True)
+
+        # Calculate top products
+        top_products = df.groupby('Name').sum().sort_values(by='Quantity', ascending=False).head(5)
         
         # Calculate customer satisfaction
-        top_products = df.groupby('Name', as_index=False).sum().sort_values(by='Quantity', ascending=False).head(5)
         
         st.subheader('Customer Satisfaction (Top 5 Products)')
         st.markdown(f"""
