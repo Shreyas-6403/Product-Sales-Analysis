@@ -87,7 +87,7 @@ if st.session_state['products']:
     for i, product in enumerate(st.session_state['products']):
         with st.expander(f"Product {i + 1}: {product['Name']}"):
             st.markdown(f"""
-            <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px;">
+            <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; color: black;">
                 <strong>ID:</strong> {product['ID']}<br>
                 <strong>Name:</strong> {product['Name']}<br>
                 <strong>Description:</strong> {product['Description']}<br>
