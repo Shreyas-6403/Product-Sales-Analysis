@@ -7,39 +7,33 @@ if 'products' not in st.session_state:
     st.session_state['products'] = []
 
 def predict_sales(data, quantity_col, cost_col, price_col):
-    try:
-        today = datetime.today()
-        one_month_later = today + timedelta(days=30)
-        one_year_later = today + timedelta(days=365)
-        
-        # Filter data for predictions
-        data['Date'] = pd.to_datetime(data['Date'])
-        data_month = data[(data['Date'] > today) & (data['Date'] <= one_month_later)]
-        data_year = data[(data['Date'] > today) & (data['Date'] <= one_year_later)]
-        
-        # Calculate predicted sales
-        sales_month = (data_month[quantity_col] * data_month[price_col]).sum()
-        sales_year = (data_year[quantity_col] * data_year[price_col]).sum()
-        
-        return sales_month, sales_year
-    except Exception as e:
-        st.error(f"Error in sales prediction: {e}")
-        return 0, 0
+    # Predict sales after a month and a year
+    today = datetime.today()
+    one_month_later = today + timedelta(days=30)
+    one_year_later = today + timedelta(days=365)
+    
+    # Filter data for predictions
+    data['Date'] = pd.to_datetime(data['Date'])
+    data_month = data[(data['Date'] > today) & (data['Date'] <= one_month_later)]
+    data_year = data[(data['Date'] > today) & (data['Date'] <= one_year_later)]
+    
+    # Calculate predicted sales
+    sales_month = (data_month[quantity_col] * data_month[price_col]).sum()
+    sales_year = (data_year[quantity_col] * data_year[price_col]).sum()
+    
+    return sales_month, sales_year
 
 def calculate_financials(data, quantity_col, cost_col, price_col):
-    try:
-        today = datetime.today().strftime("%Y-%m-%d")
-        today_data = data[data['Date'] == today]
-        today_data['Total'] = today_data[quantity_col] * (today_data[price_col] - today_data[cost_col])
-        
-        total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
-        total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
-        total_earnings = today_data['Total'].sum()
-        
-        return total_profit, total_loss, total_earnings
-    except Exception as e:
-        st.error(f"Error in calculating financials: {e}")
-        return 0, 0, 0
+    # Calculate total profit, total loss, and total earnings
+    today = datetime.today().strftime("%Y-%m-%d")
+    today_data = data[data['Date'] == today]
+    today_data['Total'] = today_data[quantity_col] * (today_data[price_col] - today_data[cost_col])
+    
+    total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
+    total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
+    total_earnings = today_data['Total'].sum()
+    
+    return total_profit, total_loss, total_earnings
 
 # Display image and title side by side
 col1, col2 = st.columns([1, 3])
@@ -170,21 +164,50 @@ if st.session_state['products']:
         }
         .table-section td {
             background-color: #1b1b2f;
+            color: white;
+        }
+        .table-section tr:hover {
+            background-color: #162447;
+        }
+        .section-title {
+            font-size: 26px;
+            color: #ffab40;
+            margin-bottom: 20px;
+        }
+        .card {
+            background-color: #162447;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .card h4 {
+            color: #ffab40;
+            font-size: 22px;
+        }
+        .card p {
+            color: white;
+            font-size: 18px;
         }
         </style>
         """, unsafe_allow_html=True)
-        
+
         st.markdown(f"""
-        <div class="report-section">
-            <h3>Sales Prediction</h3>
+        <div class="card">
+            <h4>Sales Prediction</h4>
             <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
             <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown(f"""
-        <div class="report-section">
-            <h3>Financials</h3>
+        <div class="card">
+            <h4>Financials</h4>
             <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
             <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
             <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
