@@ -114,8 +114,44 @@ if st.session_state['products']:
         
         # Generate report
         st.header('Report')
+        
+        st.markdown("""
+        <style>
+        .report-section {
+            background-color: #f4f4f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .report-section h3 {
+            color: #333;
+        }
+        .report-section p {
+            color: #555;
+        }
+        .table-section {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-section th, .table-section td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table-section th {
+            background-color: #f4f4f9;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         st.markdown(f"""
-        <div>
+        <div class="report-section">
             <h3>Sales Prediction</h3>
             <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
             <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
@@ -123,7 +159,7 @@ if st.session_state['products']:
         """, unsafe_allow_html=True)
         
         st.markdown(f"""
-        <div>
+        <div class="report-section">
             <h3>Financials</h3>
             <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
             <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
@@ -135,15 +171,31 @@ if st.session_state['products']:
         numeric_columns = df.select_dtypes(include=['number']).columns
         top_products = df.groupby('Name', as_index=False)[numeric_columns].sum().sort_values(by='Quantity', ascending=False).head(5)
         
-        st.subheader('Customer Satisfaction (Top 5 Products)')
         st.markdown(f"""
-        <div>
+        <div class="table-section">
+            <h3>Top Rated Products</h3>
+            <table>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Total Quantity Sold</th>
+                </tr>
+                {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_products.iterrows()])}
+            </table>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Calculate customer satisfaction (Top 5 Products by Quantity)
+        top_5_products = df.groupby('Name').agg({'Quantity': 'sum'}).sort_values(by='Quantity', ascending=False).head(5).reset_index()
+        
+        st.markdown(f"""
+        <div class="table-section">
+            <h3>Customer Satisfaction (Top 5 Products)</h3>
             <table>
                 <tr>
                     <th>Product Name</th>
                     <th>Quantity Sold</th>
                 </tr>
-                {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_products.iterrows()])}
+                {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_5_products.iterrows()])}
             </table>
         </div>
         """, unsafe_allow_html=True)
