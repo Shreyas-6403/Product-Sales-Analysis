@@ -37,10 +37,10 @@ def calculate_profit_loss(data, quantity_sold_col, unit_price_col):
     return total_profit, total_loss, total_earnings
 
 # Streamlit app layout
-st.title('Product Sales Analysis')
+st.title('SALES ANALYSIS')
 
 # Display the image
-st.image('sales.jpg')
+st.image('sales.jpg', width=100)
 
 # User input form
 st.header('Input Parameters')
