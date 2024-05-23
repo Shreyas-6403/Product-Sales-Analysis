@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 from datetime import datetime, timedelta
 
 # Load the product sales data
@@ -42,8 +41,14 @@ st.title('Product Sales Analysis')
 
 # User input form
 st.header('Input Parameters')
-quantity_sold = st.number_input('Enter Quantity Sold:', min_value=0, step=1)
-unit_price = st.number_input('Enter Unit Price:', min_value=0, step=1)
+product_id = st.number_input('Product ID')
+product_name = st.text_input('Product Name')
+product_description = st.text_area('Product Description')
+quantity_type = st.selectbox('Quantity Type', ['None', 'Dozen', 'Feet', 'Galloon', 'Gram', 'Hours', 'Inch', 'Kilogram', 'Kilometer', 'Litre'], index=0)
+sku = st.text_input('SKU')
+quantity = st.number_input('Quantity', min_value=0, step=1)
+product_cost = st.number_input('Product Cost (in rupees)', min_value=0, step=1)
+sell_price = st.number_input('Sell Price (in rupees)', min_value=0, step=1)
 submit_button = st.button('Generate Report')
 
 # Generate report
