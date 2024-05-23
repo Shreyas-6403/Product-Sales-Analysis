@@ -132,43 +132,11 @@ if st.session_state['products']:
         """, unsafe_allow_html=True)
         
         # Calculate customer satisfaction
-        df_numeric = df.drop(columns=['Date'])
-        top_products = df_numeric.groupby('Name').sum().sort_values(by='Quantity', ascending=False).head(5)
+        top_products = df.groupby('Name', as_index=False).sum().sort_values(by='Quantity', ascending=False).head(5)
         
         st.subheader('Customer Satisfaction (Top 5 Products)')
-        st.write(top_products[['Quantity']])
-
-        st.write("""
-        <style>
-        .report-container {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
         st.markdown(f"""
-        <div class="report-container">
-            <h3>Sales Prediction</h3>
-            <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
-            <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div class="report-container">
-            <h3>Financials</h3>
-            <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
-            <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
-            <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
-        </div>
-        """, unsafe_allow_html=True)
-
-        st.markdown(f"""
-        <div class="report-container">
-            <h3>Customer Satisfaction (Top 5 Products)</h3>
+        <div style="color: black;">
             <table>
                 <tr>
                     <th>Product Name</th>
