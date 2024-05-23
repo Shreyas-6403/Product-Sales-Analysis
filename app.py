@@ -39,6 +39,9 @@ def calculate_profit_loss(data, quantity_sold_col, unit_price_col):
 # Streamlit app layout
 st.title('Product Sales Analysis')
 
+# Display the image
+st.image('sell.jpg')
+
 # User input form
 st.header('Input Parameters')
 product_id = st.number_input('Product ID')
