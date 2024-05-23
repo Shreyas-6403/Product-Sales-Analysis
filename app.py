@@ -174,20 +174,40 @@ if st.session_state['products']:
             color: #ffab40;
             margin-bottom: 20px;
         }
+        .card {
+            background-color: #162447;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        .card h4 {
+            color: #ffab40;
+            font-size: 22px;
+        }
+        .card p {
+            color: white;
+            font-size: 18px;
+        }
         </style>
         """, unsafe_allow_html=True)
 
         st.markdown(f"""
-        <div class="report-section">
-            <h3 class="section-title">Sales Prediction</h3>
+        <div class="card">
+            <h4>Sales Prediction</h4>
             <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
             <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown(f"""
-        <div class="report-section">
-            <h3 class="section-title">Financials</h3>
+        <div class="card">
+            <h4>Financials</h4>
             <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
             <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
             <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
@@ -195,7 +215,7 @@ if st.session_state['products']:
         """, unsafe_allow_html=True)
         
         # Calculate top rated products and customer satisfaction
-        numeric_columns = df.select_dtypes(include=['number']).columns
+        numeric_columns = df.select_dtypes(include='number').columns
         top_products = df.groupby('Name', as_index=False)[numeric_columns].sum().sort_values(by='Quantity', ascending=False).head(5)
         
         st.markdown(f"""
