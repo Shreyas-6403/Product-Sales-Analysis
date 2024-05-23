@@ -118,22 +118,24 @@ if st.session_state['products']:
         st.markdown("""
         <style>
         .report-section {
-            background-color: #f4f4f9;
+            background-color: #2a151a;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
+            color: white;
         }
         .report-section h3 {
-            color: #333;
+            color: white;
         }
         .report-section p {
-            color: #555;
+            color: white;
         }
         .table-section {
-            background-color: #ffffff;
+            background-color: #2a151a;
             padding: 10px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: white;
         }
         .table-section table {
             width: 100%;
@@ -145,7 +147,8 @@ if st.session_state['products']:
             border-bottom: 1px solid #ddd;
         }
         .table-section th {
-            background-color: #f4f4f9;
+            background-color: #2a151a;
+            color: white;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -167,7 +170,7 @@ if st.session_state['products']:
         </div>
         """, unsafe_allow_html=True)
         
-        # Calculate customer satisfaction
+        # Calculate top rated products
         numeric_columns = df.select_dtypes(include=['number']).columns
         top_products = df.groupby('Name', as_index=False)[numeric_columns].sum().sort_values(by='Quantity', ascending=False).head(5)
         
