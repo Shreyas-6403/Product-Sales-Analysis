@@ -194,35 +194,19 @@ if st.session_state['products']:
         </div>
         """, unsafe_allow_html=True)
         
-        # Calculate top rated products
+        # Calculate top rated products and customer satisfaction
         numeric_columns = df.select_dtypes(include=['number']).columns
         top_products = df.groupby('Name', as_index=False)[numeric_columns].sum().sort_values(by='Quantity', ascending=False).head(5)
         
         st.markdown(f"""
         <div class="table-section">
-            <h3 class="section-title">Top Rated Products</h3>
+            <h3 class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
             <table>
                 <tr>
                     <th>Product Name</th>
                     <th>Total Quantity Sold</th>
                 </tr>
                 {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_products.iterrows()])}
-            </table>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Calculate customer satisfaction (Top 5 Products by Quantity)
-        top_5_products = df.groupby('Name').agg({'Quantity': 'sum'}).sort_values(by='Quantity', ascending=False).head(5).reset_index()
-        
-        st.markdown(f"""
-        <div class="table-section">
-            <h3 class="section-title">Customer Satisfaction (Top 5 Products)</h3>
-            <table>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Quantity Sold</th>
-                </tr>
-                {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_5_products.iterrows()])}
             </table>
         </div>
         """, unsafe_allow_html=True)
