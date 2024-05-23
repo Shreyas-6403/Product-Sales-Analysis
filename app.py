@@ -39,9 +39,7 @@ def calculate_profit_loss(data, quantity_sold_col, unit_price_col):
 # Display the image and title side by side
 col1, col2 = st.columns([1, 3])
 col1.image('sales.jpg', width=150)
-col2.title("PRODUCT
-SALES
-ANALYSIS")
+col2.title("PRODUCT SALES ANALYSIS")
 
 # User input form
 st.header('Input Parameters')
