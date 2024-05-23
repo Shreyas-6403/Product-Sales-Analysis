@@ -85,16 +85,20 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
 if st.session_state['products']:
     st.header('Products Added')
     for i, product in enumerate(st.session_state['products']):
-        st.subheader(f"Product {i + 1}")
-        st.write(f"**ID:** {product['ID']}")
-        st.write(f"**Name:** {product['Name']}")
-        st.write(f"**Description:** {product['Description']}")
-        st.write(f"**Quantity Type:** {product['Quantity Type']}")
-        st.write(f"**SKU:** {product['SKU']}")
-        st.write(f"**Quantity:** {product['Quantity']}")
-        st.write(f"**Cost Price:** {product['Cost Price']}")
-        st.write(f"**Selling Price:** {product['Selling Price']}")
-        st.write(f"**Date:** {product['Date']}")
+        with st.expander(f"Product {i + 1}: {product['Name']}"):
+            st.markdown(f"""
+            <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px;">
+                <strong>ID:</strong> {product['ID']}<br>
+                <strong>Name:</strong> {product['Name']}<br>
+                <strong>Description:</strong> {product['Description']}<br>
+                <strong>Quantity Type:</strong> {product['Quantity Type']}<br>
+                <strong>SKU:</strong> {product['SKU']}<br>
+                <strong>Quantity:</strong> {product['Quantity']}<br>
+                <strong>Cost Price:</strong> ₹{product['Cost Price']}<br>
+                <strong>Selling Price:</strong> ₹{product['Selling Price']}<br>
+                <strong>Date:</strong> {product['Date']}
+            </div>
+            """, unsafe_allow_html=True)
         
     generate_report_button = st.button('Generate Report')
     
@@ -111,15 +115,56 @@ if st.session_state['products']:
         # Generate report
         st.header('Report')
         st.subheader('Sales Prediction')
-        st.write(f'Sales after a month: {sales_month}')
-        st.write(f'Sales after a year: {sales_year}')
+        st.write(f'Sales after a month: ₹{sales_month}')
+        st.write(f'Sales after a year: ₹{sales_year}')
         
         st.subheader('Financials')
-        st.write(f'Today\'s Total Profit: {total_profit}')
-        st.write(f'Today\'s Total Loss: {total_loss}')
-        st.write(f'Total Earnings: {total_earnings}')
+        st.write(f'Today\'s Total Profit: ₹{total_profit}')
+        st.write(f'Today\'s Total Loss: ₹{total_loss}')
+        st.write(f'Total Earnings: ₹{total_earnings}')
         
         # Calculate customer satisfaction
         top_products = df.groupby('Name').sum().sort_values(by='Quantity', ascending=False).head(5)
         st.subheader('Customer Satisfaction (Top 5 Products)')
         st.write(top_products[['Quantity']])
+
+        st.write("""
+        <style>
+        .report-container {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="report-container">
+            <h3>Sales Prediction</h3>
+            <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
+            <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="report-container">
+            <h3>Financials</h3>
+            <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
+            <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
+            <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown(f"""
+        <div class="report-container">
+            <h3>Customer Satisfaction (Top 5 Products)</h3>
+            <table>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity Sold</th>
+                </tr>
+                {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_products.iterrows()])}
+            </table>
+        </div>
+        """, unsafe_allow_html=True)
