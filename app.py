@@ -123,39 +123,63 @@ if st.session_state['products']:
             border-radius: 10px;
             margin-bottom: 20px;
             color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        .report-section:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
         .report-section h3 {
-            color: white;
+            color: #ffab40;
+            font-size: 24px;
         }
         .report-section p {
             color: white;
+            font-size: 18px;
         }
         .table-section {
-            background-color: #2a151a;
-            padding: 10px;
+            background-color: #1b1b2f;
+            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
             color: white;
+        }
+        .table-section:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
         }
         .table-section table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         .table-section th, .table-section td {
-            padding: 10px;
+            padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
         .table-section th {
-            background-color: #2a151a;
+            background-color: #162447;
+            color: #ffab40;
+        }
+        .table-section td {
+            background-color: #1b1b2f;
             color: white;
+        }
+        .table-section tr:hover {
+            background-color: #162447;
+        }
+        .section-title {
+            font-size: 26px;
+            color: #ffab40;
+            margin-bottom: 20px;
         }
         </style>
         """, unsafe_allow_html=True)
 
         st.markdown(f"""
         <div class="report-section">
-            <h3>Sales Prediction</h3>
+            <h3 class="section-title">Sales Prediction</h3>
             <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
             <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
         </div>
@@ -163,7 +187,7 @@ if st.session_state['products']:
         
         st.markdown(f"""
         <div class="report-section">
-            <h3>Financials</h3>
+            <h3 class="section-title">Financials</h3>
             <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
             <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
             <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
@@ -176,7 +200,7 @@ if st.session_state['products']:
         
         st.markdown(f"""
         <div class="table-section">
-            <h3>Top Rated Products</h3>
+            <h3 class="section-title">Top Rated Products</h3>
             <table>
                 <tr>
                     <th>Product Name</th>
@@ -192,7 +216,7 @@ if st.session_state['products']:
         
         st.markdown(f"""
         <div class="table-section">
-            <h3>Customer Satisfaction (Top 5 Products)</h3>
+            <h3 class="section-title">Customer Satisfaction (Top 5 Products)</h3>
             <table>
                 <tr>
                     <th>Product Name</th>
