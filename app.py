@@ -80,7 +80,7 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
     product_id = st.number_input('Product ID', min_value=1, step=1)
     product_name = st.text_input('Product Name')
     product_description = st.text_area('Product Description')
-    quantity_type = st.selectbox('Quantity Type', ['Dozen', 'Feet', 'Gallon', 'Gram', 'Hours', 'Inch', 'Kilogram', 'Kilometer', 'Litre', 'Unit'])
+    quantity_type = st.selectbox('Quantity Type', ['Gram', 'Kilogram', 'Litre', 'Unit'])
     sku = st.text_input('SKU')
     quantity = st.number_input('Quantity', min_value=0, step=1)
     product_cost = st.number_input('Product Cost (in rupees)', min_value=0, step=1)
