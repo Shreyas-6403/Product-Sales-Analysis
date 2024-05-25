@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, r2_score
 
 # Initialize session state for storing product data
 if 'products' not in st.session_state:
@@ -31,7 +31,9 @@ def train_model(data):
     # Evaluate model
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
+    r2 = r2_score(y_test, y_pred)
     st.write(f"Model Mean Squared Error: {mse}")
+    st.write(f"Model R² Score: {r2}")
 
     return model
 
@@ -78,7 +80,7 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
     product_id = st.number_input('Product ID', min_value=1, step=1)
     product_name = st.text_input('Product Name')
     product_description = st.text_area('Product Description')
-    quantity_type = st.selectbox('Quantity Type', ['Dozen', 'Feet', 'Gallon', 'Gram', 'Hours', 'Inch', 'Kilogram', 'Kilometer', 'Litre'])
+    quantity_type = st.selectbox('Quantity Type', ['Dozen', 'Feet', 'Gallon', 'Gram', 'Hours', 'Inch', 'Kilogram', 'Kilometer', 'Litre', 'Unit'])
     sku = st.text_input('SKU')
     quantity = st.number_input('Quantity', min_value=0, step=1)
     product_cost = st.number_input('Product Cost (in rupees)', min_value=0, step=1)
