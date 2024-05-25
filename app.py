@@ -55,7 +55,9 @@ def calculate_financials(data, quantity_col, cost_col, price_col):
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
     total_earnings = today_data['Total'].sum()
     
-    return total_profit, total_loss, total_earnings
+    product_earnings = today_data.groupby('Name')['Total'].sum().reset_index()
+    
+    return total_profit, total_loss, total_earnings, product_earnings
 
 # Display image and title side by side
 col1, col2 = st.columns([1, 3])
@@ -135,8 +137,8 @@ if st.session_state['products']:
         sales_month = predict_sales(model, 30)['Predicted Sales'].sum()
         sales_year = predict_sales(model, 365)['Predicted Sales'].sum()
         
-        # Calculate total profit, total loss, and total earnings
-        total_profit, total_loss, total_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
+        # Calculate total profit, total loss, total earnings, and per-product earnings
+        total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
         
         # Generate report
         st.header('Report')
@@ -237,6 +239,10 @@ if st.session_state['products']:
             <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
             <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
             <p><strong>Total Earnings:</strong> ₹{total_earnings}</p>
+            <p><strong>Per Product Earnings:</strong></p>
+            <ul>
+                {''.join([f"<li>{row['Name']}: ₹{row['Total']}</li>" for index, row in product_earnings.iterrows()])}
+            </ul>
         </div>
         """, unsafe_allow_html=True)
         
