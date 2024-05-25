@@ -26,12 +26,6 @@ def train_model(data):
         st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
-    # Additional debug information
-    st.write("Features (X) shape:", X.shape)
-    st.write("Target (y) shape:", y.shape)
-    st.write("Features (X) head:", X.head())
-    st.write("Target (y) head:", y.head())
-
     # Train-test split
     try:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -70,10 +64,11 @@ def calculate_financials(data, quantity_col, cost_col, price_col):
     
     total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
+    total_earnings = total_profit + total_loss
     
     product_earnings = today_data.groupby('Name')['Total'].sum().reset_index()
     
-    return total_profit, total_loss, product_earnings
+    return total_profit, total_loss, total_earnings, product_earnings
 
 # Display image and title side by side
 col1, col2 = st.columns([1, 3])
@@ -159,8 +154,8 @@ if st.session_state['products']:
             sales_month = predict_sales(model, 30)['Predicted Sales'].sum()
             sales_year = predict_sales(model, 365)['Predicted Sales'].sum()
             
-            # Calculate total profit, total loss, and per-product earnings
-            total_profit, total_loss, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
+            # Calculate total profit, total loss, total earnings, and per-product earnings
+            total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
             
             # Generate report
             st.header('Report')
@@ -263,6 +258,7 @@ if st.session_state['products']:
                 <h4>Financials</h4>
                 <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
                 <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
+                <p><strong>Today's Total Earnings:</strong> ₹{total_earnings}</p>
                 <p><strong>Per Product Earnings:</strong></p>
                 <ul>
                     {''.join([f"<li>{row['Name']}: ₹{row['Total']}</li>" for index, row in product_earnings.iterrows()])}
