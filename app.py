@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error
 
 # Initialize session state for storing product data
 if 'products' not in st.session_state:
@@ -32,10 +32,6 @@ def train_model(data):
     y_pred = model.predict(X_test)
     mse = mean_squared_error(y_test, y_pred)
     st.write(f"Model Mean Squared Error: {mse}")
-
-    # Calculate R² score
-    r2 = r2_score(y_test, y_pred)
-    st.write(f"Model R² Score: {r2}")
 
     return model
 
