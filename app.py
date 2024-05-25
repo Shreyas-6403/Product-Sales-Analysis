@@ -151,7 +151,7 @@ if st.session_state['products']:
             earnings_month = predict_earnings(model, 30, today_earnings)
             
             # Predict earnings for the next 365 days based on the monthly prediction
-            earnings_year = predict_earnings(model, 365, earnings_month / 30)  # Adjust the input to be earnings per day
+            earnings_year = predict_earnings(model, 365, today_earnings)  # Adjust the input to be today's earnings
             
             # Calculate total profit, total loss, total earnings, and per-product earnings
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
