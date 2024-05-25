@@ -21,16 +21,19 @@ def train_model(data):
     X = data[['DayOfYear', 'Year']]
     y = data['Earnings']
     
+    # Check for empty DataFrame
     if X.empty or y.empty:
         st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
+    # Train-test split
     try:
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     except ValueError as e:
         st.error(f"ValueError during train_test_split: {e}")
         return None
 
+    # Train model
     model = LinearRegression()
     model.fit(X_train, y_train)
 
@@ -61,17 +64,20 @@ def calculate_financials(data, quantity_col, cost_col, price_col):
     
     return total_profit, total_loss, total_earnings, product_earnings
 
+# Display image and title side by side
 col1, col2 = st.columns([1, 3])
 with col1:
     st.image("sales.jpg", use_column_width=True)
 with col2:
     st.title("Product Sales Analysis")
 
+# Add Product Data Button
 add_product_button = st.button('Add Product Data')
 
 if add_product_button:
     st.session_state['add_product'] = True
 
+# Product addition form
 if 'add_product' in st.session_state and st.session_state['add_product']:
     st.header('Add Product Details')
     
@@ -88,6 +94,7 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
     save_details_button = st.button('Save Details')
     
     if save_details_button:
+        # Save the product details to session state
         new_product = {
             'ID': product_id,
             'Name': product_name,
@@ -103,6 +110,7 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
         st.session_state['add_product'] = False
         st.success('Product details saved successfully!')
 
+# Display products and generate report button
 if st.session_state['products']:
     st.header('Products Added')
     for i, product in enumerate(st.session_state['products']):
@@ -124,19 +132,31 @@ if st.session_state['products']:
     generate_report_button = st.button('Generate Report')
     
     if generate_report_button:
+        # Convert session state products to DataFrame
         df = pd.DataFrame(st.session_state['products'])
+
+        # Ensure correct data types
         df['Quantity'] = df['Quantity'].astype(float)
         df['Cost Price'] = df['Cost Price'].astype(float)
         df['Selling Price'] = df['Selling Price'].astype(float)
 
+        # Train a machine learning model
         model = train_model(df)
         
         if model:
+            # Calculate today's earnings to use as a reference for future predictions
             _, _, today_earnings, _ = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
+            
+            # Predict earnings for the next 30 days based on today's earnings
             earnings_month = predict_earnings(model, 30, today_earnings)
-            earnings_year = predict_earnings(model, 365, earnings_month / 30)
+            
+            # Predict earnings for the next 365 days based on the monthly prediction
+            earnings_year = predict_earnings(model, 365, earnings_month / 30)  # Adjust the input to be earnings per day
+            
+            # Calculate total profit, total loss, total earnings, and per-product earnings
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
             
+            # Generate report
             st.header('Report')
             
             st.markdown("""
@@ -247,6 +267,7 @@ if st.session_state['products']:
             </div>
             """, unsafe_allow_html=True)
             
+            # Calculate top rated products and customer satisfaction
             numeric_columns = df.select_dtypes(include='number').columns
             top_products = df.groupby('Name', as_index=False)[numeric_columns].sum().sort_values(by='Quantity', ascending=False).head(5)
             
