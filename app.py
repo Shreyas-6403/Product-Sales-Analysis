@@ -84,7 +84,7 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
     product_id = st.number_input('Product ID', min_value=1, step=1)
     product_name = st.text_input('Product Name')
     product_description = st.text_area('Product Description')
-    quantity_type = st.selectbox('Quantity Type', ['Gram', 'Kilogram', 'Litre', 'Unit'])
+    quantity_type = st.selectbox('Quantity Type', ['Unit'])
     sku = st.text_input('SKU')
     quantity = st.number_input('Quantity', min_value=0, step=1)
     product_cost = st.number_input('Product Cost (in rupees)', min_value=0, step=1)
@@ -150,8 +150,8 @@ if st.session_state['products']:
             # Predict earnings for the next 30 days based on today's earnings
             earnings_month = predict_earnings(model, 30, today_earnings)
             
-            # Predict earnings for the next 365 days based on the monthly prediction
-            earnings_year = predict_earnings(model, 365, today_earnings)  # Adjust the input to be today's earnings
+            # Predict earnings for the next 365 days based on today's earnings
+            earnings_year = predict_earnings(model, 365, today_earnings)
             
             # Calculate total profit, total loss, total earnings, and per-product earnings
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
