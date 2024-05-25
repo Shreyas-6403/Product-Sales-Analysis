@@ -26,8 +26,18 @@ def train_model(data):
         st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
+    # Additional debug information
+    st.write("Features (X) shape:", X.shape)
+    st.write("Target (y) shape:", y.shape)
+    st.write("Features (X) head:", X.head())
+    st.write("Target (y) head:", y.head())
+
     # Train-test split
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    try:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    except ValueError as e:
+        st.error(f"ValueError during train_test_split: {e}")
+        return None
 
     # Train model
     model = LinearRegression()
@@ -205,6 +215,9 @@ if st.session_state['products']:
             .table-section td {
                 background-color: #1b1b2f;
                 color: white;
+            }
+            .table-section tr:nth-child(even) {
+                background-color: #1b1b2f;
             }
             .table-section tr:hover {
                 background-color: #162447;
