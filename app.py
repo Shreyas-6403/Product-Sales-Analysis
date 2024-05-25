@@ -1,30 +1,52 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
 
 # Initialize session state for storing product data
 if 'products' not in st.session_state:
     st.session_state['products'] = []
 
-def predict_sales(data, quantity_col, cost_col, price_col):
-    # Predict sales after a month and a year
-    today = datetime.today()
-    one_month_later = today + timedelta(days=30)
-    one_year_later = today + timedelta(days=365)
-    
-    # Filter data for predictions
+def prepare_data(data):
     data['Date'] = pd.to_datetime(data['Date'])
-    data_month = data[(data['Date'] > today) & (data['Date'] <= one_month_later)]
-    data_year = data[(data['Date'] > today) & (data['Date'] <= one_year_later)]
-    
-    # Calculate predicted sales
-    sales_month = (data_month[quantity_col] * data_month[price_col]).sum()
-    sales_year = (data_year[quantity_col] * data_year[price_col]).sum()
-    
-    return sales_month, sales_year
+    data['DayOfYear'] = data['Date'].dt.dayofyear
+    data['Year'] = data['Date'].dt.year
+    return data
+
+def train_model(data):
+    # Prepare data
+    data = prepare_data(data)
+    X = data[['DayOfYear', 'Year']]
+    y = data['Quantity'] * data['Selling Price']
+
+    # Train-test split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Evaluate model
+    y_pred = model.predict(X_test)
+    mse = mean_squared_error(y_test, y_pred)
+    st.write(f"Model Mean Squared Error: {mse}")
+
+    return model
+
+def predict_sales(model, days_ahead):
+    today = datetime.today()
+    future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
+    future_data = pd.DataFrame({
+        'Date': future_dates,
+        'DayOfYear': [date.timetablestruct().tm_yday for date in future_dates],
+        'Year': [date.year for date in future_dates]
+    })
+    future_data['Predicted Sales'] = model.predict(future_data[['DayOfYear', 'Year']])
+    return future_data
 
 def calculate_financials(data, quantity_col, cost_col, price_col):
-    # Calculate total profit, total loss, and total earnings
     today = datetime.today().strftime("%Y-%m-%d")
     today_data = data[data['Date'] == today]
     today_data['Total'] = today_data[quantity_col] * (today_data[price_col] - today_data[cost_col])
@@ -106,8 +128,12 @@ if st.session_state['products']:
         # Convert session state products to DataFrame
         df = pd.DataFrame(st.session_state['products'])
         
-        # Predict sales after a month and a year
-        sales_month, sales_year = predict_sales(df, 'Quantity', 'Cost Price', 'Selling Price')
+        # Train a machine learning model
+        model = train_model(df)
+        
+        # Predict sales for the next 30 days and 365 days
+        sales_month = predict_sales(model, 30)['Predicted Sales'].sum()
+        sales_year = predict_sales(model, 365)['Predicted Sales'].sum()
         
         # Calculate total profit, total loss, and total earnings
         total_profit, total_loss, total_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
