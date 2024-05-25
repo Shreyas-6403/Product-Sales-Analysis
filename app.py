@@ -40,7 +40,7 @@ def predict_sales(model, days_ahead):
     future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
     future_data = pd.DataFrame({
         'Date': future_dates,
-        'DayOfYear': [date.timetablestruct().tm_yday for date in future_dates],
+        'DayOfYear': [date.timetuple().tm_yday for date in future_dates],
         'Year': [date.year for date in future_dates]
     })
     future_data['Predicted Sales'] = model.predict(future_data[['DayOfYear', 'Year']])
