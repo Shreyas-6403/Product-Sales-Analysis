@@ -39,7 +39,7 @@ def train_model(data):
 
     return model
 
-def predict_earnings(model, days_ahead):
+def predict_earnings(model, days_ahead, reference_earnings):
     today = datetime.today()
     future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
     future_data = pd.DataFrame({
@@ -48,7 +48,8 @@ def predict_earnings(model, days_ahead):
         'Year': [date.year for date in future_dates]
     })
     future_data['Predicted Earnings'] = model.predict(future_data[['DayOfYear', 'Year']])
-    return future_data
+    total_predicted_earnings = future_data['Predicted Earnings'].sum()
+    return total_predicted_earnings
 
 def calculate_financials(data, quantity_col, cost_col, price_col):
     today = datetime.today().strftime("%Y-%m-%d")
@@ -143,9 +144,14 @@ if st.session_state['products']:
         model = train_model(df)
         
         if model:
-            # Predict earnings for the next 30 days and 365 days
-            earnings_month = predict_earnings(model, 30)['Predicted Earnings'].sum()
-            earnings_year = predict_earnings(model, 365)['Predicted Earnings'].sum()
+            # Calculate today's earnings to use as a reference for future predictions
+            _, _, today_earnings, _ = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
+            
+            # Predict earnings for the next 30 days based on today's earnings
+            earnings_month = predict_earnings(model, 30, today_earnings)
+            
+            # Predict earnings for the next 365 days based on the monthly prediction
+            earnings_year = predict_earnings(model, 365, earnings_month / 30)  # Adjust the input to be earnings per day
             
             # Calculate total profit, total loss, total earnings, and per-product earnings
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
