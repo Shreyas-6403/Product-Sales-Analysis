@@ -12,13 +12,14 @@ def prepare_data(data):
     data['Date'] = pd.to_datetime(data['Date'])
     data['DayOfYear'] = data['Date'].dt.dayofyear
     data['Year'] = data['Date'].dt.year
+    data['Earnings'] = data['Quantity'] * (data['Selling Price'] - data['Cost Price'])
     return data
 
 def train_model(data):
     # Prepare data
     data = prepare_data(data)
     X = data[['DayOfYear', 'Year']]
-    y = data['Quantity'] * data['Selling Price']
+    y = data['Earnings']
     
     # Check for empty DataFrame
     if X.empty or y.empty:
@@ -38,7 +39,7 @@ def train_model(data):
 
     return model
 
-def predict_sales(model, days_ahead):
+def predict_earnings(model, days_ahead):
     today = datetime.today()
     future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
     future_data = pd.DataFrame({
@@ -46,7 +47,7 @@ def predict_sales(model, days_ahead):
         'DayOfYear': [date.timetuple().tm_yday for date in future_dates],
         'Year': [date.year for date in future_dates]
     })
-    future_data['Predicted Sales'] = model.predict(future_data[['DayOfYear', 'Year']])
+    future_data['Predicted Earnings'] = model.predict(future_data[['DayOfYear', 'Year']])
     return future_data
 
 def calculate_financials(data, quantity_col, cost_col, price_col):
@@ -142,9 +143,9 @@ if st.session_state['products']:
         model = train_model(df)
         
         if model:
-            # Predict sales for the next 30 days and 365 days
-            sales_month = predict_sales(model, 30)['Predicted Sales'].sum()
-            sales_year = predict_sales(model, 365)['Predicted Sales'].sum()
+            # Predict earnings for the next 30 days and 365 days
+            earnings_month = predict_earnings(model, 30)['Predicted Earnings'].sum()
+            earnings_year = predict_earnings(model, 365)['Predicted Earnings'].sum()
             
             # Calculate total profit, total loss, total earnings, and per-product earnings
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
@@ -220,8 +221,10 @@ if st.session_state['products']:
                 border-radius: 10px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease;
-                color: white;
                 margin-bottom: 20px;
+                color: white;
+                text-align: center;
+                font-size: 20px;
             }
             .card:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -240,20 +243,20 @@ if st.session_state['products']:
             st.markdown(f"""
             <div class="card">
                 <h4>Sales Prediction</h4>
-                <p><strong>Sales after a month:</strong> ₹{sales_month}</p>
-                <p><strong>Sales after a year:</strong> ₹{sales_year}</p>
+                <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
+                <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
             </div>
             """, unsafe_allow_html=True)
             
             st.markdown(f"""
             <div class="card">
                 <h4>Financials</h4>
-                <p><strong>Today's Total Profit:</strong> ₹{total_profit}</p>
-                <p><strong>Today's Total Loss:</strong> ₹{total_loss}</p>
-                <p><strong>Today's Total Earnings:</strong> ₹{total_earnings}</p>
+                <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
+                <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
+                <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
                 <p><strong>Per Product Earnings:</strong></p>
                 <ul>
-                    {''.join([f"<li>{row['Name']}: ₹{row['Total']}</li>" for index, row in product_earnings.iterrows()])}
+                    {''.join([f"<li>{row['Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
                 </ul>
             </div>
             """, unsafe_allow_html=True)
@@ -270,7 +273,7 @@ if st.session_state['products']:
                         <th>Product Name</th>
                         <th>Total Quantity Sold</th>
                     </tr>
-                    {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']}</td></tr>" for index, row in top_products.iterrows()])}
+                    {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']:.2f}</td></tr>" for index, row in top_products.iterrows()])}
                 </table>
             </div>
             """, unsafe_allow_html=True)
