@@ -175,7 +175,7 @@ if st.session_state['products']:
                 st.markdown("<strong>Sales:</strong>", unsafe_allow_html=True)
                 for sale in product_sales:
                     st.markdown(f"""
-                    <div style="background-color: #e0f7fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <div style="background-color: #e0f7fa; padding: 10px; border-radius: 5px; margin-top: 10px; color: black;">
                         <strong>Quantity Sold:</strong> {sale['Quantity Sold']}<br>
                         <strong>Product Sold At:</strong> ₹{sale['Product Sold At']}<br>
                         <strong>Date:</strong> {sale['Date']}
