@@ -8,6 +8,9 @@ from sklearn.linear_model import LinearRegression
 if 'products' not in st.session_state:
     st.session_state['products'] = []
 
+if 'sales' not in st.session_state:
+    st.session_state['sales'] = []
+
 def prepare_data(data):
     data['Date'] = pd.to_datetime(data['Date'])
     data['DayOfYear'] = data['Date'].dt.dayofyear
@@ -109,6 +112,43 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
         st.session_state['products'].append(new_product)
         st.session_state['add_product'] = False
         st.success('Product details saved successfully!')
+
+# Add Sales Data Button
+add_sales_button = st.button('Add Sales Data')
+
+if add_sales_button:
+    st.session_state['add_sales'] = True
+
+# Sales addition form
+if 'add_sales' in st.session_state and st.session_state['add_sales']:
+    st.header('Add Sales Details')
+
+    product_names = [product['Name'] for product in st.session_state['products']]
+    product_name = st.selectbox('Product Name', product_names)
+    
+    selected_product = next((product for product in st.session_state['products'] if product['Name'] == product_name), None)
+    if selected_product:
+        max_quantity = selected_product['Quantity']
+        quantity_sold = st.number_input('Quantity Sold', min_value=0, max_value=max_quantity, step=1)
+        
+        if quantity_sold > max_quantity:
+            st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
+        
+        sell_price = selected_product['Selling Price']
+        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
+        
+        save_sales_button = st.button('Save Sales')
+        
+        if save_sales_button:
+            new_sale = {
+                'Product Name': product_name,
+                'Quantity Sold': quantity_sold,
+                'Product Sold At': product_sold_at,
+                'Date': datetime.today().strftime("%Y-%m-%d")
+            }
+            st.session_state['sales'].append(new_sale)
+            st.session_state['add_sales'] = False
+            st.success('Sales details saved successfully!')
 
 # Display products and generate report button
 if st.session_state['products']:
