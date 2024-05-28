@@ -29,16 +29,22 @@ def train_model(data):
         st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
-    # Train-test split
-    try:
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    except ValueError as e:
-        st.error(f"ValueError during train_test_split: {e}")
-        return None
+    # Train model using all data if not enough samples for a split
+    if len(data) < 5:
+        st.warning("Insufficient data for train-test split. Training on entire dataset.")
+        model = LinearRegression()
+        model.fit(X, y)
+    else:
+        # Train-test split
+        try:
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        except ValueError as e:
+            st.error(f"ValueError during train_test_split: {e}")
+            return None
 
-    # Train model
-    model = LinearRegression()
-    model.fit(X_train, y_train)
+        # Train model
+        model = LinearRegression()
+        model.fit(X_train, y_train)
 
     return model
 
@@ -192,19 +198,15 @@ if st.session_state['products']:
         df['Quantity'] = df['Quantity'].astype(float)
         df['Cost Price'] = df['Cost Price'].astype(float)
         df['Selling Price'] = df['Selling Price'].astype(float)
-
-        # Train a machine learning model
+        df['Date'] = pd.to_datetime(df['Date'])
+        
+        # Train the model
         model = train_model(df)
         
         if model:
-            # Calculate today's earnings to use as a reference for future predictions
-            _, _, today_earnings, _ = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
-            
-            # Predict earnings for the next 30 days based on today's earnings
-            earnings_month = predict_earnings(model, 30, today_earnings)
-            
-            # Predict earnings for the next 365 days based on today's earnings
-            earnings_year = predict_earnings(model, 365, today_earnings)
+            # Predict future earnings
+            earnings_month = predict_earnings(model, 30, df['Earnings'])
+            earnings_year = predict_earnings(model, 365, df['Earnings'])
             
             # Calculate financials
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
