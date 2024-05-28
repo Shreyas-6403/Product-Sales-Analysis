@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
-# Initialize session state for storing product data
+# Initialize session state for storing product and sales data
 if 'products' not in st.session_state:
     st.session_state['products'] = []
 
@@ -168,6 +168,19 @@ if st.session_state['products']:
                 <strong>Date:</strong> {product['Date']}
             </div>
             """, unsafe_allow_html=True)
+            
+            # Show sales related to this product
+            product_sales = [sale for sale in st.session_state['sales'] if sale['Product Name'] == product['Name']]
+            if product_sales:
+                st.markdown("<strong>Sales:</strong>", unsafe_allow_html=True)
+                for sale in product_sales:
+                    st.markdown(f"""
+                    <div style="background-color: #e0f7fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                        <strong>Quantity Sold:</strong> {sale['Quantity Sold']}<br>
+                        <strong>Product Sold At:</strong> ₹{sale['Product Sold At']}<br>
+                        <strong>Date:</strong> {sale['Date']}
+                    </div>
+                    """, unsafe_allow_html=True)
         
     generate_report_button = st.button('Generate Report')
     
@@ -193,22 +206,19 @@ if st.session_state['products']:
             # Predict earnings for the next 365 days based on today's earnings
             earnings_year = predict_earnings(model, 365, today_earnings)
             
-            # Calculate total profit, total loss, total earnings, and per-product earnings
+            # Calculate financials
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
             
-            # Generate report
-            st.header('Report')
-            
+            # Display the results in a styled format
             st.markdown("""
             <style>
             .report-section {
-                background-color: #2a151a;
+                background-color: #162447;
                 padding: 20px;
                 border-radius: 10px;
-                margin-bottom: 20px;
-                color: white;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease;
+                color: white;
             }
             .report-section:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
