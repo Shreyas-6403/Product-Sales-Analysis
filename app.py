@@ -48,7 +48,7 @@ def train_model(data):
 
     return model
 
-def predict_earnings(model, days_ahead, reference_earnings):
+def predict_earnings(model, days_ahead):
     today = datetime.today()
     future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
     future_data = pd.DataFrame({
@@ -60,17 +60,19 @@ def predict_earnings(model, days_ahead, reference_earnings):
     total_predicted_earnings = future_data['Predicted Earnings'].sum()
     return total_predicted_earnings
 
-def calculate_financials(data, quantity_col, cost_col, price_col):
+def calculate_financials(data, sales_data):
     today = datetime.today().strftime("%Y-%m-%d")
-    today_data = data[data['Date'] == today]
-    today_data['Total'] = today_data[quantity_col] * (today_data[price_col] - today_data[cost_col])
-    
+    today_sales = pd.DataFrame(sales_data)
+    today_sales['Date'] = pd.to_datetime(today_sales['Date'])
+    today_data = today_sales[today_sales['Date'] == today]
+    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Product Sold At'])
+
     total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
     total_earnings = total_profit + total_loss
-    
-    product_earnings = today_data.groupby('Name')['Total'].sum().reset_index()
-    
+
+    product_earnings = today_data.groupby('Product Name')['Total'].sum().reset_index()
+
     return total_profit, total_loss, total_earnings, product_earnings
 
 # Display image and title side by side
@@ -192,24 +194,25 @@ if st.session_state['products']:
     
     if generate_report_button:
         # Convert session state products to DataFrame
-        df = pd.DataFrame(st.session_state['products'])
+        df_products = pd.DataFrame(st.session_state['products'])
+        df_sales = pd.DataFrame(st.session_state['sales'])
 
         # Ensure correct data types
-        df['Quantity'] = df['Quantity'].astype(float)
-        df['Cost Price'] = df['Cost Price'].astype(float)
-        df['Selling Price'] = df['Selling Price'].astype(float)
-        df['Date'] = pd.to_datetime(df['Date'])
+        df_products['Quantity'] = df_products['Quantity'].astype(float)
+        df_products['Cost Price'] = df_products['Cost Price'].astype(float)
+        df_products['Selling Price'] = df_products['Selling Price'].astype(float)
+        df_products['Date'] = pd.to_datetime(df_products['Date'])
         
         # Train the model
-        model = train_model(df)
+        model = train_model(df_products)
         
         if model:
             # Predict future earnings
-            earnings_month = predict_earnings(model, 30, df['Earnings'])
-            earnings_year = predict_earnings(model, 365, df['Earnings'])
+            earnings_month = predict_earnings(model, 30)
+            earnings_year = predict_earnings(model, 365)
             
             # Calculate financials
-            total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df, 'Quantity', 'Cost Price', 'Selling Price')
+            total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df_products, st.session_state['sales'])
             
             # Display the results in a styled format
             st.markdown("""
@@ -314,14 +317,13 @@ if st.session_state['products']:
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
                 <p><strong>Per Product Earnings:</strong></p>
                 <ul>
-                    {''.join([f"<li>{row['Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
+                    {''.join([f"<li>{row['Product Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
                 </ul>
             </div>
             """, unsafe_allow_html=True)
             
-            # Calculate top rated products and customer satisfaction
-            numeric_columns = df.select_dtypes(include='number').columns
-            top_products = df.groupby('Name', as_index=False)[numeric_columns].sum().sort_values(by='Quantity', ascending=False).head(5)
+            # Calculate top rated products by total quantity sold
+            total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
             
             st.markdown(f"""
             <div class="table-section">
@@ -331,7 +333,7 @@ if st.session_state['products']:
                         <th>Product Name</th>
                         <th>Total Quantity Sold</th>
                     </tr>
-                    {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity']:.2f}</td></tr>" for index, row in top_products.iterrows()])}
+                    {''.join([f"<tr><td>{row['Product Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
                 </table>
             </div>
             """, unsafe_allow_html=True)
