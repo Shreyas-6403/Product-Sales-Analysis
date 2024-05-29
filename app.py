@@ -62,13 +62,13 @@ def calculate_financials(data, sales_data):
     today_sales = pd.DataFrame(sales_data)
     today_sales['Date'] = pd.to_datetime(today_sales['Date'])
     today_data = today_sales[today_sales['Date'] == today]
-    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Product Sold At'])
+    today_data['Total'] = today_data['Quantity Sold'] * today_data['Product Sold At']
 
     total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
     total_earnings = total_profit + total_loss
 
-    product_earnings = today_data.groupby('Product Name')['Total'].sum().reset_index()
+    product_earnings = today_data.groupby('Name')['Total'].sum().reset_index()
 
     return total_profit, total_loss, total_earnings, product_earnings
 
@@ -96,31 +96,31 @@ if add_product_button:
 if 'add_product' in st.session_state and st.session_state['add_product']:
     st.header('Add Product Details')
     
-    product_id = st.number_input('Product ID', min_value=1, step=1)
-    product_name = st.text_input('Product Name')
-    product_description = st.text_area('Product Description')
+    product_id = st.number_input('ID', min_value=1, step=1)
+    product_name = st.text_input('Name')
+    product_description = st.text_area('Description')
     quantity_type = st.selectbox('Quantity Type', ['Unit'])
     sku = st.text_input('SKU')
     quantity = st.number_input('Quantity', min_value=0, step=1)
-    product_cost = st.number_input('Product Cost (in rupees)', min_value=0, step=1)
-    sell_price = st.number_input('Sell Price (in rupees)', min_value=0, step=1)
+    product_cost = st.number_input('Cost Price (in rupees)', min_value=0, step=1)
+    sell_price = st.number_input('Selling Price (in rupees)', min_value=0, step=1)
     selected_date = st.date_input('Select Date', datetime.today())
     
     save_details_button = st.button('Save Details')
     
     if save_details_button:
         new_product = {
-            'Product ID': product_id,
-            'Product Name': product_name,
-            'Product Description': product_description,
-            'Quantity type': quantity_type,
+            'ID': product_id,
+            'Name': product_name,
+            'Description': product_description,
+            'Quantity Type': quantity_type,
             'SKU': sku,
             'Quantity': quantity,
-            'Product Cost (in rupees)': product_cost,
-            'Sell Price (in rupees)': sell_price,
+            'Cost Price': product_cost,
+            'Selling Price': sell_price,
             'Date': selected_date.strftime("%Y-%m-%d"),
             'Quantity Sold': 0,  # Placeholder for Quantity Sold
-            'Product Sold at': 0  # Placeholder for Product Sold At
+            'Product Sold At': 0  # Placeholder for Product Sold At
         }
         st.session_state['products'].append(new_product)
         st.session_state['add_product'] = False
@@ -136,10 +136,10 @@ if add_sales_button:
 if 'add_sales' in st.session_state and st.session_state['add_sales']:
     st.header('Add Sales Details')
 
-    product_names = [product['Product Name'] for product in st.session_state['products']]
-    product_name = st.selectbox('Product Name', product_names)
+    product_names = [product['Name'] for product in st.session_state['products']]
+    product_name = st.selectbox('Name', product_names)
     
-    selected_product = next((product for product in st.session_state['products'] if product['Product Name'] == product_name), None)
+    selected_product = next((product for product in st.session_state['products'] if product['Name'] == product_name), None)
     if selected_product:
         max_quantity = selected_product['Quantity']
         quantity_sold = st.number_input('Quantity Sold', min_value=0, max_value=max_quantity, step=1)
@@ -147,14 +147,14 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         if quantity_sold > max_quantity:
             st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
         
-        sell_price = selected_product['Sell Price (in rupees)']
+        sell_price = selected_product['Selling Price']
         product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
         
         save_sales_button = st.button('Save Sales')
         
         if save_sales_button:
             new_sale = {
-                'Product Name': product_name,
+                'Name': product_name,
                 'Quantity Sold': quantity_sold,
                 'Product Sold At': product_sold_at,
                 'Date': datetime.today().strftime("%Y-%m-%d")
@@ -171,27 +171,27 @@ if st.session_state['products']:
     st.write("Products session state:", st.session_state['products'])
 
     for i, product in enumerate(st.session_state['products']):
-        # Check if 'Product Name' exists in product dictionary
-        if 'Product Name' not in product:
-            st.error(f"Product at index {i} is missing 'Product Name': {product}")
+        # Check if 'Name' exists in product dictionary
+        if 'Name' not in product:
+            st.error(f"Product at index {i} is missing 'Name': {product}")
             continue
         
-        with st.expander(f"Product {i + 1}: {product['Product Name']}"):
+        with st.expander(f"Product {i + 1}: {product['Name']}"):
             st.markdown(f"""
             <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; color: black;">
-                <strong>ID:</strong> {product['Product ID']}<br>
-                <strong>Name:</strong> {product['Product Name']}<br>
-                <strong>Description:</strong> {product['Product Description']}<br>
-                <strong>Quantity Type:</strong> {product['Quantity type']}<br>
+                <strong>ID:</strong> {product['ID']}<br>
+                <strong>Name:</strong> {product['Name']}<br>
+                <strong>Description:</strong> {product['Description']}<br>
+                <strong>Quantity Type:</strong> {product['Quantity Type']}<br>
                 <strong>SKU:</strong> {product['SKU']}<br>
                 <strong>Quantity:</strong> {product['Quantity']}<br>
-                <strong>Cost Price:</strong> ₹{product['Product Cost (in rupees)']}<br>
-                <strong>Selling Price:</strong> ₹{product['Sell Price (in rupees)']}<br>
+                <strong>Cost Price:</strong> ₹{product['Cost Price']}<br>
+                <strong>Selling Price:</strong> ₹{product['Selling Price']}<br>
                 <strong>Date:</strong> {product['Date']}
             </div>
             """, unsafe_allow_html=True)
             
-            product_sales = [sale for sale in st.session_state['sales'] if sale['Product Name'] == product['Product Name']]
+            product_sales = [sale for sale in st.session_state['sales'] if sale['Name'] == product['Name']]
             if product_sales:
                 st.markdown("<strong>Sales:</strong>", unsafe_allow_html=True)
                 for sale in product_sales:
@@ -210,8 +210,8 @@ if st.session_state['products']:
         df_sales = pd.DataFrame(st.session_state['sales'])
 
         df_products['Quantity'] = df_products['Quantity'].astype(float)
-        df_products['Product Cost (in rupees)'] = df_products['Product Cost (in rupees)'].astype(float)
-        df_products['Sell Price (in rupees)'] = df_products['Sell Price (in rupees)'].astype(float)
+        df_products['Cost Price'] = df_products['Cost Price'].astype(float)
+        df_products['Selling Price'] = df_products['Selling Price'].astype(float)
         df_products['Date'] = pd.to_datetime(df_products['Date'])
         
         model = train_model(df_products)
@@ -324,22 +324,22 @@ if st.session_state['products']:
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
                 <p><strong>Per Product Earnings:</strong></p>
                 <ul>
-                    {''.join([f"<li>{row['Product Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
+                    {''.join([f"<li>{row['Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
                 </ul>
             </div>
             """, unsafe_allow_html=True)
             
-            total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
+            total_quantity_sold = df_sales.groupby('Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
             
             st.markdown(f"""
             <div class="table-section">
                 <h3 class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
                 <table>
                     <tr>
-                        <th>Product Name</th>
+                        <th>Name</th>
                         <th>Total Quantity Sold</th>
                     </tr>
-                    {''.join([f"<tr><td>{row['Product Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
+                    {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
                 </table>
             </div>
             """, unsafe_allow_html=True)
