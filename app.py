@@ -17,7 +17,7 @@ def load_data():
 def prepare_data(data):
     data['DayOfYear'] = data['Date'].dt.dayofyear
     data['Year'] = data['Date'].dt.year
-    data['Earnings'] = data['Quantity Sold'] * (data['Product Sold at'] - data['Product Cost (in rupees)'])
+    data['Earnings'] = data['Quantity Sold'] * (data['Product Sold At'] - data['Cost Price'])
     return data
 
 def train_model(data):
@@ -191,7 +191,7 @@ if st.session_state['products']:
             </div>
             """, unsafe_allow_html=True)
             
-            product_sales = [sale for sale in st.session_state['sales'] if sale['Name'] == product['Name']]
+            product_sales = [sale for sale in st.session_state['sales'] if 'Name' in sale and sale['Name'] == product['Name']]
             if product_sales:
                 st.markdown("<strong>Sales:</strong>", unsafe_allow_html=True)
                 for sale in product_sales:
