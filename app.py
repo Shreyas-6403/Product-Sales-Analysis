@@ -166,7 +166,16 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
 # Display products and generate report button
 if st.session_state['products']:
     st.header('Products Added')
+    
+    # Debugging: print the contents of st.session_state['products']
+    st.write("Products session state:", st.session_state['products'])
+
     for i, product in enumerate(st.session_state['products']):
+        # Check if 'Product Name' exists in product dictionary
+        if 'Product Name' not in product:
+            st.error(f"Product at index {i} is missing 'Product Name': {product}")
+            continue
+        
         with st.expander(f"Product {i + 1}: {product['Product Name']}"):
             st.markdown(f"""
             <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; color: black;">
