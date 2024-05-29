@@ -26,9 +26,9 @@ def train_model(data):
     y = data['Earnings']
     
     # Check for empty DataFrame
-    if X.empty or y.empty:
-        st.error("The data is insufficient for training the model. Please add more product data.")
-        return None
+    #if X.empty or y.empty:
+     #   st.error("The data is insufficient for training the model. Please add more product data.")
+      #  return None
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
