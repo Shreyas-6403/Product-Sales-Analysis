@@ -1,45 +1,49 @@
+#with sales and product report but insufficient train test split
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
-# Load dataset if available
-def load_data():
-    try:
-        data = pd.read_csv("ProductData.csv")
-        data['Date'] = pd.to_datetime(data['Date'])
-        return data
-    except FileNotFoundError:
-        st.error("ProductData.csv not found. Please ensure the file is in the correct directory.")
-        return pd.DataFrame()
+# Initialize session state for storing product and sales data
+if 'products' not in st.session_state:
+    st.session_state['products'] = []
+
+if 'sales' not in st.session_state:
+    st.session_state['sales'] = []
 
 def prepare_data(data):
+    data['Date'] = pd.to_datetime(data['Date'])
     data['DayOfYear'] = data['Date'].dt.dayofyear
     data['Year'] = data['Date'].dt.year
-    data['Earnings'] = data['Quantity Sold'] * (data['Product Sold At'] - data['Cost Price'])
+    data['Earnings'] = data['Quantity'] * (data['Selling Price'] - data['Cost Price'])
     return data
 
 def train_model(data):
+    # Prepare data
     data = prepare_data(data)
     X = data[['DayOfYear', 'Year']]
     y = data['Earnings']
     
+    # Check for empty DataFrame
     if X.empty or y.empty:
         st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
+    # Train model using all data if not enough samples for a split
     if len(data) < 5:
         st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
+        # Train-test split
         try:
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         except ValueError as e:
             st.error(f"ValueError during train_test_split: {e}")
             return None
 
+        # Train model
         model = LinearRegression()
         model.fit(X_train, y_train)
 
@@ -62,22 +66,15 @@ def calculate_financials(data, sales_data):
     today_sales = pd.DataFrame(sales_data)
     today_sales['Date'] = pd.to_datetime(today_sales['Date'])
     today_data = today_sales[today_sales['Date'] == today]
-    today_data['Total'] = today_data['Quantity Sold'] * today_data['Product Sold At']
+    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Product Sold At'])
 
     total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
     total_earnings = total_profit + total_loss
 
-    product_earnings = today_data.groupby('Name')['Total'].sum().reset_index()
+    product_earnings = today_data.groupby('Product Name')['Total'].sum().reset_index()
 
     return total_profit, total_loss, total_earnings, product_earnings
-
-# Initialize session state for storing product and sales data
-if 'products' not in st.session_state:
-    st.session_state['products'] = load_data().to_dict('records')  # Load initial data from CSV
-
-if 'sales' not in st.session_state:
-    st.session_state['sales'] = []
 
 # Display image and title side by side
 col1, col2 = st.columns([1, 3])
@@ -96,19 +93,20 @@ if add_product_button:
 if 'add_product' in st.session_state and st.session_state['add_product']:
     st.header('Add Product Details')
     
-    product_id = st.number_input('ID', min_value=1, step=1)
-    product_name = st.text_input('Name')
-    product_description = st.text_area('Description')
+    product_id = st.number_input('Product ID', min_value=1, step=1)
+    product_name = st.text_input('Product Name')
+    product_description = st.text_area('Product Description')
     quantity_type = st.selectbox('Quantity Type', ['Unit'])
     sku = st.text_input('SKU')
     quantity = st.number_input('Quantity', min_value=0, step=1)
-    product_cost = st.number_input('Cost Price (in rupees)', min_value=0, step=1)
-    sell_price = st.number_input('Selling Price (in rupees)', min_value=0, step=1)
+    product_cost = st.number_input('Product Cost (in rupees)', min_value=0, step=1)
+    sell_price = st.number_input('Sell Price (in rupees)', min_value=0, step=1)
     selected_date = st.date_input('Select Date', datetime.today())
     
     save_details_button = st.button('Save Details')
     
     if save_details_button:
+        # Save the product details to session state
         new_product = {
             'ID': product_id,
             'Name': product_name,
@@ -118,9 +116,7 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
             'Quantity': quantity,
             'Cost Price': product_cost,
             'Selling Price': sell_price,
-            'Date': selected_date.strftime("%Y-%m-%d"),
-            'Quantity Sold': 0,  # Placeholder for Quantity Sold
-            'Product Sold At': 0  # Placeholder for Product Sold At
+            'Date': selected_date.strftime("%Y-%m-%d")
         }
         st.session_state['products'].append(new_product)
         st.session_state['add_product'] = False
@@ -137,7 +133,7 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
     st.header('Add Sales Details')
 
     product_names = [product['Name'] for product in st.session_state['products']]
-    product_name = st.selectbox('Name', product_names)
+    product_name = st.selectbox('Product Name', product_names)
     
     selected_product = next((product for product in st.session_state['products'] if product['Name'] == product_name), None)
     if selected_product:
@@ -154,7 +150,7 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         
         if save_sales_button:
             new_sale = {
-                'Name': product_name,
+                'Product Name': product_name,
                 'Quantity Sold': quantity_sold,
                 'Product Sold At': product_sold_at,
                 'Date': datetime.today().strftime("%Y-%m-%d")
@@ -166,16 +162,7 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
 # Display products and generate report button
 if st.session_state['products']:
     st.header('Products Added')
-    
-    # Debugging: print the contents of st.session_state['products']
-    st.write("Products session state:", st.session_state['products'])
-
     for i, product in enumerate(st.session_state['products']):
-        # Check if 'Name' exists in product dictionary
-        if 'Name' not in product:
-            st.error(f"Product at index {i} is missing 'Name': {product}")
-            continue
-        
         with st.expander(f"Product {i + 1}: {product['Name']}"):
             st.markdown(f"""
             <div style="background-color: #f9f9f9; padding: 10px; border-radius: 5px; color: black;">
@@ -191,7 +178,8 @@ if st.session_state['products']:
             </div>
             """, unsafe_allow_html=True)
             
-            product_sales = [sale for sale in st.session_state['sales'] if 'Name' in sale and sale['Name'] == product['Name']]
+            # Show sales related to this product
+            product_sales = [sale for sale in st.session_state['sales'] if sale['Product Name'] == product['Name']]
             if product_sales:
                 st.markdown("<strong>Sales:</strong>", unsafe_allow_html=True)
                 for sale in product_sales:
@@ -206,22 +194,28 @@ if st.session_state['products']:
     generate_report_button = st.button('Generate Report')
     
     if generate_report_button:
+        # Convert session state products to DataFrame
         df_products = pd.DataFrame(st.session_state['products'])
         df_sales = pd.DataFrame(st.session_state['sales'])
 
+        # Ensure correct data types
         df_products['Quantity'] = df_products['Quantity'].astype(float)
         df_products['Cost Price'] = df_products['Cost Price'].astype(float)
         df_products['Selling Price'] = df_products['Selling Price'].astype(float)
         df_products['Date'] = pd.to_datetime(df_products['Date'])
         
+        # Train the model
         model = train_model(df_products)
         
         if model:
+            # Predict future earnings
             earnings_month = predict_earnings(model, 30)
             earnings_year = predict_earnings(model, 365)
             
+            # Calculate financials
             total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df_products, st.session_state['sales'])
             
+            # Display the results in a styled format
             st.markdown("""
             <style>
             .report-section {
@@ -324,22 +318,23 @@ if st.session_state['products']:
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
                 <p><strong>Per Product Earnings:</strong></p>
                 <ul>
-                    {''.join([f"<li>{row['Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
+                    {''.join([f"<li>{row['Product Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
                 </ul>
             </div>
             """, unsafe_allow_html=True)
             
-            total_quantity_sold = df_sales.groupby('Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
+            # Calculate top rated products by total quantity sold
+            total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
             
             st.markdown(f"""
             <div class="table-section">
                 <h3 class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
                 <table>
                     <tr>
-                        <th>Name</th>
+                        <th>Product Name</th>
                         <th>Total Quantity Sold</th>
                     </tr>
-                    {''.join([f"<tr><td>{row['Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
+                    {''.join([f"<tr><td>{row['Product Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
                 </table>
             </div>
             """, unsafe_allow_html=True)
