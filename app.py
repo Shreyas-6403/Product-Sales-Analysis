@@ -27,12 +27,12 @@ def train_model(data):
     
     # Check for empty DataFrame
     if X.empty or y.empty:
-        st.error("The data is insufficient for training the model. Please add more product data.")
+   #     st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
-    #    st.warning("Insufficient data for train-test split. Training on entire dataset.")
+        st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
