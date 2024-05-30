@@ -142,12 +142,16 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         if quantity_sold > max_quantity:
             st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
         
+        sell_price = selected_product['Selling Price']
+        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
+        
         save_sales_button = st.button('Save Sales')
         
         if save_sales_button:
             new_sale = {
                 'Product Name': product_name,
                 'Quantity Sold': quantity_sold,
+                'Product Sold At': product_sold_at,
                 'Date': datetime.today().strftime("%Y-%m-%d")
             }
             st.session_state['sales'].append(new_sale)
