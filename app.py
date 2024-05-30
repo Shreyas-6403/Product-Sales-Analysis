@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 
 # Initialize session state for storing product and sales data
@@ -207,12 +208,14 @@ if st.session_state['products']:
             st.header("Sales Prediction")
             st.markdown(f"**Sales after a month:** ₹{earnings_month:.2f}")
             st.markdown(f"**Sales after a year:** ₹{earnings_year:.2f}")
-            
-            st.header("Financials")
-            st.markdown(f"**Today's Total Profit:** ₹{total_profit:.2f}")
-            st.markdown(f"**Today's Total Loss:** ₹{total_loss:.2f}")
-            st.markdown(f"**Today's Total Earnings:** ₹{total_earnings:.2f}")
-            
-            st.markdown("**Per Product Earnings:**")
-            for index, row in product_earnings.iterrows():
-                st.markdown(f"**{row['Product Name']}:** ₹{row['Profit']:.2f}")
+        
+        st.header("Today's Financial Report")
+        st.markdown(f"**Total Profit:** ₹{total_profit:.2f}")
+        st.markdown(f"**Total Loss:** ₹{total_loss:.2f}")
+        st.markdown(f"**Net Earnings:** ₹{total_earnings:.2f}")
+        
+        # Rank products by earnings
+        product_earnings = product_earnings.sort_values(by='Profit', ascending=False)
+        st.header("Product Ranking by Earnings")
+        for i, row in product_earnings.iterrows():
+            st.markdown(f"**{row['Product Name']}:** ₹{row['Profit']:.2f}")
