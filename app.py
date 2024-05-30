@@ -202,7 +202,21 @@ if st.session_state['products']:
             earnings_month = predict_earnings_simple(total_earnings, 30)
             earnings_year = predict_earnings_simple(total_earnings, 365)
             
-           # Display the results in a styled format
+            st.header("Sales Prediction")
+            st.markdown(f"**Sales after a month:** ₹{earnings_month:.2f}")
+            st.markdown(f"**Sales after a year:** ₹{earnings_year:.2f}")
+            
+            st.header("Financials")
+            st.markdown(f"**Today's Total Profit:** ₹{total_profit:.2f}")
+            st.markdown(f"**Today's Total Loss:** ₹{total_loss:.2f}")
+            st.markdown(f"**Today's Total Earnings:** ₹{total_earnings:.2f}")
+            
+            st.header("Product Earnings")
+            st.table(product_earnings)
+        else:
+            st.error("Model training failed due to insufficient data or data preparation issues.")
+
+# Display styled results
 st.markdown("""
 <style>
 .report-section {
@@ -271,40 +285,41 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown(f"""
-<div class="report-section">
-    <h3>Sales Prediction</h3>
-    <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
-    <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
-</div>
-<div class="report-section">
-    <h3>Financials</h3>
-    <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
-    <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
-    <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
-</div>
-<div class="table-section">
-    <div class="section-title">Product Earnings</div>
-    <table>
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Profit (₹)</th>
-            </tr>
-        </thead>
-        <tbody>
-""", unsafe_allow_html=True)
-
-for index, row in product_earnings.iterrows():
+if 'total_earnings' in locals():
     st.markdown(f"""
-    <tr>
-        <td>{row['Product Name']}</td>
-        <td>₹{row['Profit']:.2f}</td>
-    </tr>
+    <div class="report-section">
+        <h3>Sales Prediction</h3>
+        <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
+        <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
+    </div>
+    <div class="report-section">
+        <h3>Financials</h3>
+        <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
+        <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
+        <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
+    </div>
+    <div class="table-section">
+        <div class="section-title">Product Earnings</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Profit (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
     """, unsafe_allow_html=True)
 
-st.markdown("""
-        </tbody>
-    </table>
-</div>
-""", unsafe_allow_html=True)
+    for index, row in product_earnings.iterrows():
+        st.markdown(f"""
+        <tr>
+            <td>{row['Product Name']}</td>
+            <td>₹{row['Profit']:.2f}</td>
+        </tr>
+        """, unsafe_allow_html=True)
+
+    st.markdown("""
+            </tbody>
+        </table>
+    </div>
+    """, unsafe_allow_html=True)
