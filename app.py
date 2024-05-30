@@ -12,10 +12,9 @@ if 'sales' not in st.session_state:
     st.session_state['sales'] = []
 
 def prepare_data(data):
-    data['Date'] = pd.to_datetime(data['Date'])
-    data['DayOfYear'] = data['Date'].dt.dayofyear
-    data['Year'] = data['Date'].dt.year
-    data['Earnings'] = data['Quantity'] * (data['Selling Price'] - data['Cost Price'])
+    data['Sale Date'] = pd.to_datetime(data['Sale Date'])
+    data['DayOfYear'] = data['Sale Date'].dt.dayofyear
+    data['Year'] = data['Sale Date'].dt.year
     return data
 
 def train_model(data):
@@ -26,12 +25,12 @@ def train_model(data):
     
     # Check for empty DataFrame
     if X.empty or y.empty:
-      #  st.error("The data is insufficient for training the model. Please add more product data.")
+        st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
-     #   st.warning("Insufficient data for train-test split. Training on entire dataset.")
+        st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
@@ -52,7 +51,7 @@ def predict_earnings(model, days_ahead):
     today = datetime.today()
     future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
     future_data = pd.DataFrame({
-        'Date': future_dates,
+        'Sale Date': future_dates,
         'DayOfYear': [date.timetuple().tm_yday for date in future_dates],
         'Year': [date.year for date in future_dates]
     })
@@ -200,8 +199,6 @@ if st.session_state['products']:
         
         # Prepare data for the model
         df_combined = df_combined.rename(columns={'Date': 'Sale Date'})
-        df_combined['Sale Date'] = pd.to_datetime(df_combined['Sale Date'])
-        df_combined = df_combined.set_index('Sale Date').resample('D').sum().reset_index()
         
         # Train and predict
         model = train_model(df_combined)
