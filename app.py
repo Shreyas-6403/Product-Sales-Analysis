@@ -234,6 +234,7 @@ if st.session_state['products']:
                 transition: all 0.3s ease;
                 color: white;
                 margin-bottom: 20px;
+                overflow-x: auto;
             }
             .table-section:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
