@@ -1,8 +1,6 @@
-#with sales and product report but insufficient train test split
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
-from sklearn.model_selection import train_test_split
+from datetime import datetime
 from sklearn.linear_model import LinearRegression
 
 # Initialize session state for storing product and sales data
@@ -13,10 +11,9 @@ if 'sales' not in st.session_state:
     st.session_state['sales'] = []
 
 def prepare_data(data):
-    data['Date'] = pd.to_datetime(data['Date'])
-    data['DayOfYear'] = data['Date'].dt.dayofyear
-    data['Year'] = data['Date'].dt.year
-    data['Earnings'] = data['Quantity'] * (data['Selling Price'] - data['Cost Price'])
+    data['Sale Date'] = pd.to_datetime(data['Sale Date'])
+    data['DayOfYear'] = data['Sale Date'].dt.dayofyear
+    data['Year'] = data['Sale Date'].dt.year
     return data
 
 def train_model(data):
@@ -136,16 +133,13 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         if quantity_sold > max_quantity:
             st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
         
-        sell_price = selected_product['Selling Price']
-        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
-        
         save_sales_button = st.button('Save Sales')
         
         if save_sales_button:
             new_sale = {
                 'Product Name': product_name,
                 'Quantity Sold': quantity_sold,
-                'Product Sold At': product_sold_at,
+                'Selling Price': selected_product['Selling Price'],
                 'Date': datetime.today().strftime("%Y-%m-%d")
             }
             st.session_state['sales'].append(new_sale)
@@ -179,7 +173,7 @@ if st.session_state['products']:
                     st.markdown(f"""
                     <div style="background-color: #e0f7fa; padding: 10px; border-radius: 5px; margin-top: 10px; color: black;">
                         <strong>Quantity Sold:</strong> {sale['Quantity Sold']}<br>
-                        <strong>Product Sold At:</strong> ₹{sale['Product Sold At']}<br>
+                        <strong>Selling Price:</strong> ₹{sale['Selling Price']}<br>
                         <strong>Date:</strong> {sale['Date']}
                     </div>
                     """, unsafe_allow_html=True)
@@ -187,18 +181,20 @@ if st.session_state['products']:
     generate_report_button = st.button('Generate Report')
     
     if generate_report_button:
-        # Convert session state products to DataFrame
+        # Combine products and sales data
         df_products = pd.DataFrame(st.session_state['products'])
         df_sales = pd.DataFrame(st.session_state['sales'])
-
-        # Ensure correct data types
-        df_products['Quantity'] = df_products['Quantity'].astype(float)
-        df_products['Cost Price'] = df_products['Cost Price'].astype(float)
-        df_products['Selling Price'] = df_products['Selling Price'].astype(float)
-        df_products['Date'] = pd.to_datetime(df_products['Date'])
         
-        # Train the model
-        model = train_model(df_products)
+        # Calculate combined earnings
+        df_sales['Earnings'] = df_sales['Quantity Sold'] * df_sales['Selling Price']
+        
+        # Combine products and sales data for model training
+        df_combined = df_sales[['Date', 'Earnings']].rename(columns={'Date': 'Sale Date'})
+        df_combined['Sale Date'] = pd.to_datetime(df_combined['Sale Date'])
+        df_combined = df_combined.resample('D', on='Sale Date').sum().reset_index()
+        
+        # Train the model and make predictions
+        model = train_model(df_combined)
         
         # Today's financials
         total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df_products, st.session_state['sales'])
@@ -220,128 +216,3 @@ if st.session_state['products']:
             st.markdown("**Per Product Earnings:**")
             for index, row in product_earnings.iterrows():
                 st.markdown(f"**{row['Product Name']}:** ₹{row['Profit']:.2f}")
-
-
-            # Display the results in a styled format
-            st.markdown("""
-            <style>
-            .report-section {
-                background-color: #162447;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-                color: white;
-            }
-            .report-section:hover {
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            }
-            .report-section h3 {
-                color: #ffab40;
-                font-size: 24px;
-            }
-            .report-section p {
-                color: white;
-                font-size: 18px;
-            }
-            .table-section {
-                background-color: #1b1b2f;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-                color: white;
-            }
-            .table-section:hover {
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            }
-            .table-section table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-            }
-            .table-section th, .table-section td {
-                padding: 15px;
-                text-align: left;
-                border-bottom: 1px solid #ddd;
-            }
-            .table-section th {
-                background-color: #162447;
-                color: #ffab40;
-            }
-            .table-section td {
-                background-color: #1b1b2f;
-                color: white;
-            }
-            .table-section tr:nth-child(even) {
-                background-color: #1b1b2f;
-            }
-            .table-section tr:hover {
-                background-color: #162447;
-            }
-            .section-title {
-                font-size: 26px;
-                color: #ffab40;
-                margin-bottom: 20px;
-            }
-            .card {
-                background-color: #162447;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-                margin-bottom: 20px;
-                color: white;
-                text-align: center;
-                font-size: 20px;
-            }
-            .card:hover {
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            }
-            .card h4 {
-                color: #ffab40;
-                font-size: 22px;
-            }
-            .card p {
-                color: white;
-                font-size: 18px;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-
-            st.markdown(f"""
-            <div class="card">
-                <h4>Sales Prediction</h4>
-                <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
-                <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown(f"""
-            <div class="card">
-                <h4>Financials</h4>
-                <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
-                <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
-                <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
-                <p><strong>Per Product Earnings:</strong></p>
-                <ul>
-                    {''.join([f"<li>{row['Product Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
-                </ul>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # Calculate top rated products by total quantity sold
-            total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
-            
-            st.markdown(f"""
-            <div class="table-section">
-                <h3 class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
-                <table>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Total Quantity Sold</th>
-                    </tr>
-                    {''.join([f"<tr><td>{row['Product Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
-                </table>
-            </div>
-            """, unsafe_allow_html=True)
