@@ -293,17 +293,12 @@ if st.session_state['products']:
                         </tr>
                     </thead>
                     <tbody>
-            """, unsafe_allow_html=True)
-
-            for index, row in product_earnings.iterrows():
-                st.markdown(f"""
-                <tr>
-                    <td>{row['Product Name']}</td>
-                    <td>₹{row['Profit']:.2f}</td>
-                </tr>
-                """, unsafe_allow_html=True)
-
-            st.markdown("""
+            """ + "".join(f"""
+                        <tr>
+                            <td>{row['Product Name']}</td>
+                            <td>₹{row['Profit']:.2f}</td>
+                        </tr>
+            """ for index, row in product_earnings.iterrows()) + """
                     </tbody>
                 </table>
             </div>
