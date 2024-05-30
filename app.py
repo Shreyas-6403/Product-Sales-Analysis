@@ -1,4 +1,3 @@
-#with sales and product report but insufficient train test split
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
@@ -66,7 +65,7 @@ def calculate_financials(data, sales_data):
     today_sales = pd.DataFrame(sales_data)
     today_sales['Date'] = pd.to_datetime(today_sales['Date'])
     today_data = today_sales[today_sales['Date'] == today]
-    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Product Sold At'])
+    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Selling Price'])
 
     total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
@@ -143,16 +142,13 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         if quantity_sold > max_quantity:
             st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
         
-        sell_price = selected_product['Selling Price']
-        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
-        
         save_sales_button = st.button('Save Sales')
         
         if save_sales_button:
             new_sale = {
                 'Product Name': product_name,
                 'Quantity Sold': quantity_sold,
-                'Product Sold At': product_sold_at,
+                'Selling Price': selected_product['Selling Price'],
                 'Date': datetime.today().strftime("%Y-%m-%d")
             }
             st.session_state['sales'].append(new_sale)
@@ -186,7 +182,7 @@ if st.session_state['products']:
                     st.markdown(f"""
                     <div style="background-color: #e0f7fa; padding: 10px; border-radius: 5px; margin-top: 10px; color: black;">
                         <strong>Quantity Sold:</strong> {sale['Quantity Sold']}<br>
-                        <strong>Product Sold At:</strong> ₹{sale['Product Sold At']}<br>
+                        <strong>Selling Price:</strong> ₹{sale['Selling Price']}<br>
                         <strong>Date:</strong> {sale['Date']}
                     </div>
                     """, unsafe_allow_html=True)
