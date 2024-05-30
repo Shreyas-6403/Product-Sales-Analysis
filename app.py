@@ -76,22 +76,22 @@ if add_product_button:
 
 if 'add_product' in st.session_state and st.session_state['add_product']:
     st.header('Add Product Details')
-    
-    product_id = st.number_input('Product ID', min_value=1, step=1)
-    product_name = st.text_input('Product Name')
-    cost_price = st.number_input('Cost Price', min_value=0.0, step=0.01)
-    quantity_available = st.number_input('Quantity Available', min_value=0, step=1)
-
-    if st.button('Save Product'):
-        product_data = {
-            'ID': product_id,
-            'Name': product_name,
-            'Cost Price': cost_price,
-            'Quantity Available': quantity_available
-        }
-        st.session_state['products'].append(product_data)
-        st.success('Product added successfully!')
-        st.session_state['add_product'] = False
+    with st.form(key='product_form'):
+        product_id = st.number_input('Product ID', min_value=1, step=1)
+        product_name = st.text_input('Product Name')
+        cost_price = st.number_input('Cost Price', min_value=0.0, step=0.01)
+        quantity_available = st.number_input('Quantity Available', min_value=0, step=1)
+        
+        if st.form_submit_button('Save Product'):
+            product_data = {
+                'ID': product_id,
+                'Name': product_name,
+                'Cost Price': cost_price,
+                'Quantity Available': quantity_available
+            }
+            st.session_state['products'].append(product_data)
+            st.success('Product added successfully!')
+            st.session_state['add_product'] = False
 
 add_sales_button = st.button('Add Sales Data')
 
@@ -100,22 +100,22 @@ if add_sales_button:
 
 if 'add_sales' in st.session_state and st.session_state['add_sales']:
     st.header('Add Sales Details')
-    
-    sale_date = st.date_input('Sale Date', value=datetime.today())
-    product_name = st.selectbox('Product Name', options=[p['Name'] for p in st.session_state['products']])
-    quantity_sold = st.number_input('Quantity Sold', min_value=1, step=1)
-    selling_price = st.number_input('Selling Price', min_value=0.0, step=0.01)
-    
-    if st.button('Save Sale'):
-        sales_data = {
-            'Date': sale_date,
-            'Product Name': product_name,
-            'Quantity Sold': quantity_sold,
-            'Selling Price': selling_price
-        }
-        st.session_state['sales'].append(sales_data)
-        st.success('Sale added successfully!')
-        st.session_state['add_sales'] = False
+    with st.form(key='sales_form'):
+        sale_date = st.date_input('Sale Date', value=datetime.today())
+        product_name = st.selectbox('Product Name', options=[p['Name'] for p in st.session_state['products']])
+        quantity_sold = st.number_input('Quantity Sold', min_value=1, step=1)
+        selling_price = st.number_input('Selling Price', min_value=0.0, step=0.01)
+        
+        if st.form_submit_button('Save Sale'):
+            sales_data = {
+                'Date': sale_date,
+                'Product Name': product_name,
+                'Quantity Sold': quantity_sold,
+                'Selling Price': selling_price
+            }
+            st.session_state['sales'].append(sales_data)
+            st.success('Sale added successfully!')
+            st.session_state['add_sales'] = False
 
 if st.button('Generate Report'):
     df_products = pd.DataFrame(st.session_state['products'])
@@ -217,7 +217,7 @@ if st.button('Generate Report'):
             <p><strong>Sales after a year:</strong> ₹{predict_earnings_simple(total_earnings, 365):.2f}</p>
         </div>
         """, unsafe_allow_html=True)
-
+        
         st.markdown(f"""
         <div class="card">
             <h4>Financials</h4>
@@ -230,7 +230,7 @@ if st.button('Generate Report'):
             </ul>
         </div>
         """, unsafe_allow_html=True)
-
+        
         total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
         
         st.markdown(f"""
@@ -245,5 +245,3 @@ if st.button('Generate Report'):
             </table>
         </div>
         """, unsafe_allow_html=True)
-    else:
-        st.error('No sales data available to generate the report.')
