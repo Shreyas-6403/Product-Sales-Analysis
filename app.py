@@ -25,7 +25,7 @@ def train_model(data):
     
     # Check for empty DataFrame
     if X.empty or y.empty:
-   #     st.error("The data is insufficient for training the model. Please add more product data.")
+    #    st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
     # Train model using all data if not enough samples for a split
@@ -47,7 +47,7 @@ def train_model(data):
 
     return model
 
-def predict_earnings(model, days_ahead):
+def predict_earnings(model, days_ahead, initial_earnings):
     today = datetime.today()
     future_dates = [today + timedelta(days=i) for i in range(1, days_ahead + 1)]
     future_data = pd.DataFrame({
@@ -55,8 +55,14 @@ def predict_earnings(model, days_ahead):
         'DayOfYear': [date.timetuple().tm_yday for date in future_dates],
         'Year': [date.year for date in future_dates]
     })
-    future_data['Predicted Earnings'] = model.predict(future_data[['DayOfYear', 'Year']])
-    total_predicted_earnings = future_data['Predicted Earnings'].sum()
+
+    # Incrementally predict earnings and add to initial earnings
+    total_predicted_earnings = initial_earnings
+    for i in range(days_ahead):
+        day_data = future_data.iloc[[i]]
+        predicted_earning = model.predict(day_data[['DayOfYear', 'Year']])[0]
+        total_predicted_earnings += predicted_earning
+    
     return total_predicted_earnings
 
 def calculate_financials(data, sales_data):
@@ -204,132 +210,132 @@ if st.session_state['products']:
         # Train the model and make predictions
         model = train_model(df_combined)
         if model:
-            earnings_month = predict_earnings(model, 30)
-            earnings_year = predict_earnings(model, 365)
+            # Calculate today's financials
+            total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df_products, st.session_state['sales'])
+            
+            earnings_month = predict_earnings(model, 30, total_earnings)
+            earnings_year = predict_earnings(model, 365, total_earnings)
         
-        # Calculate today's financials
-        total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df_products, st.session_state['sales'])
-        
-        # Display the results in a styled format
-        st.markdown("""
-        <style>
-        .report-section {
-            background-color: #162447;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            color: white;
-        }
-        .report-section:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        .report-section h3 {
-            color: #ffab40;
-            font-size: 24px;
-        }
-        .report-section p {
-            color: white;
-            font-size: 18px;
-        }
-        .table-section {
-            background-color: #1b1b2f;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            color: white;
-        }
-        .table-section:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        .table-section table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-        .table-section th, .table-section td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .table-section th {
-            background-color: #162447;
-            color: #ffab40;
-        }
-        .table-section td {
-            background-color: #1b1b2f;
-            color: white;
-        }
-        .table-section tr:nth-child(even) {
-            background-color: #1b1b2f;
-        }
-        .table-section tr:hover {
-            background-color: #162447;
-        }
-        .section-title {
-            font-size: 26px;
-            color: #ffab40;
-            margin-bottom: 20px;
-        }
-        .card {
-            background-color: #162447;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            margin-bottom: 20px;
-            color: white;
-            text-align: center;
-            font-size: 20px;
-        }
-        .card:hover {
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-        }
-        .card h4 {
-            color: #ffab40;
-            font-size: 22px;
-        }
-        .card p {
-            color: white;
-            font-size: 18px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+            # Display the results in a styled format
+            st.markdown("""
+            <style>
+            .report-section {
+                background-color: #162447;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                color: white;
+            }
+            .report-section:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .report-section h3 {
+                color: #ffab40;
+                font-size: 24px;
+            }
+            .report-section p {
+                color: white;
+                font-size: 18px;
+            }
+            .table-section {
+                background-color: #1b1b2f;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                color: white;
+            }
+            .table-section:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .table-section table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            .table-section th, .table-section td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            .table-section th {
+                background-color: #162447;
+                color: #ffab40;
+            }
+            .table-section td {
+                background-color: #1b1b2f;
+                color: white;
+            }
+            .table-section tr:nth-child(even) {
+                background-color: #1b1b2f;
+            }
+            .table-section tr:hover {
+                background-color: #162447;
+            }
+            .section-title {
+                font-size: 26px;
+                color: #ffab40;
+                margin-bottom: 20px;
+            }
+            .card {
+                background-color: #162447;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                margin-bottom: 20px;
+                color: white;
+                text-align: center;
+                font-size: 20px;
+            }
+            .card:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .card h4 {
+                color: #ffab40;
+                font-size: 22px;
+            }
+            .card p {
+                color: white;
+                font-size: 18px;
+            }
+            </style>
+            """, unsafe_allow_html=True)
 
-        st.markdown(f"""
-        <div class="card">
-            <h4>Sales Prediction</h4>
-            <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
-            <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div class="card">
-            <h4>Financials</h4>
-            <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
-            <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
-            <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
-            <p><strong>Per Product Earnings:</strong></p>
-            <ul>
-                {''.join([f"<li>{row['Product Name']}: ₹{row['Profit']:.2f}</li>" for index, row in product_earnings.iterrows()])}
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Calculate top rated products by total quantity sold
-        total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
-        
-        st.markdown(f"""
-        <div class="table-section">
-            <h3 class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
-            <table>
-                <tr>
-                    <th>Product Name</th>
-                    <th>Total Quantity Sold</th>
-                </tr>
-                {''.join([f"<tr><td>{row['Product Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
-            </table>
-        </div>
-        """, unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="card">
+                <h4>Sales Prediction</h4>
+                <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
+                <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown(f"""
+            <div class="card">
+                <h4>Financials</h4>
+                <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
+                <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
+                <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
+                <p><strong>Per Product Earnings:</strong></p>
+                <ul>
+                    {''.join([f"<li>{row['Product Name']}: ₹{row['Profit']:.2f}</li>" for index, row in product_earnings.iterrows()])}
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Calculate top rated products by total quantity sold
+            total_quantity_sold = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index().sort_values(by='Quantity Sold', ascending=False).head(5)
+            
+            st.markdown(f"""
+            <div class="table-section">
+                <h3 class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
+                <table>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Total Quantity Sold</th>
+                    </tr>
+                    {''.join([f"<tr><td>{row['Product Name']}</td><td>{row['Quantity Sold']:.2f}</td></tr>" for index, row in total_quantity_sold.iterrows()])}
+                </table>
+            </div>
+            """, unsafe_allow_html=True)
