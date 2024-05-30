@@ -1,3 +1,4 @@
+#with sales and product report but insufficient train test split
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
@@ -135,6 +136,9 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         if quantity_sold > max_quantity:
             st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
         
+        sell_price = selected_product['Selling Price']
+        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
+        
         save_sales_button = st.button('Save Sales')
         
         if save_sales_button:
@@ -195,7 +199,8 @@ if st.session_state['products']:
         
         # Train the model
         model = train_model(df_products)
- # Today's financials
+        
+        # Today's financials
         total_profit, total_loss, total_earnings, product_earnings = calculate_financials(df_products, st.session_state['sales'])
         
         # Predictions using today's earnings
@@ -216,7 +221,8 @@ if st.session_state['products']:
             for index, row in product_earnings.iterrows():
                 st.markdown(f"**{row['Product Name']}:** ₹{row['Profit']:.2f}")
 
-# Display the results in a styled format
+
+            # Display the results in a styled format
             st.markdown("""
             <style>
             .report-section {
