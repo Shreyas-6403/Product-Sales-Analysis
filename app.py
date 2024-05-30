@@ -284,7 +284,7 @@ if st.session_state['products']:
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
             </div>
             <div class="table-section">
-                <div class="section-title">Product Ranking</div>
+                <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
                 <table>
                     <thead>
                         <tr>
