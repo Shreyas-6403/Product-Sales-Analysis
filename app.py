@@ -32,7 +32,7 @@ def train_model(data):
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
-        st.warning("Insufficient data for train-test split. Training on entire dataset.")
+    #    st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
