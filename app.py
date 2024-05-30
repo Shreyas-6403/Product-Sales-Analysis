@@ -1,3 +1,4 @@
+#with sales and product report but insufficient train test split
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
@@ -26,12 +27,12 @@ def train_model(data):
     
     # Check for empty DataFrame
     if X.empty or y.empty:
-        st.error("The data is insufficient for training the model. Please add more product data.")
+     #   st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
-        st.warning("Insufficient data for train-test split. Training on entire dataset.")
+    #    st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
@@ -65,7 +66,7 @@ def calculate_financials(data, sales_data):
     today_sales = pd.DataFrame(sales_data)
     today_sales['Date'] = pd.to_datetime(today_sales['Date'])
     today_data = today_sales[today_sales['Date'] == today]
-    today_data['Total'] = today_data['Quantity Sold'] * today_data['Product Sold At']
+    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Product Sold At'])
 
     total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
     total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
@@ -102,10 +103,6 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
     sell_price = st.number_input('Sell Price (in rupees)', min_value=0, step=1)
     selected_date = st.date_input('Select Date', datetime.today())
     
-    selling_per_product = 0
-    if quantity > 0:
-        selling_per_product = sell_price / quantity
-    
     save_details_button = st.button('Save Details')
     
     if save_details_button:
@@ -119,7 +116,6 @@ if 'add_product' in st.session_state and st.session_state['add_product']:
             'Quantity': quantity,
             'Cost Price': product_cost,
             'Selling Price': sell_price,
-            'Selling Per Product': selling_per_product,
             'Date': selected_date.strftime("%Y-%m-%d")
         }
         st.session_state['products'].append(new_product)
@@ -148,8 +144,7 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
             st.warning(f"You can't enter a quantity higher than the actual quantity ({max_quantity}).")
         
         sell_price = selected_product['Selling Price']
-        selling_per_product = selected_product['Selling Per Product']
-        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=selling_per_product * quantity_sold)
+        product_sold_at = st.number_input('Product Sold At', min_value=0, step=1, value=sell_price * quantity_sold)
         
         save_sales_button = st.button('Save Sales')
         
@@ -179,7 +174,6 @@ if st.session_state['products']:
                 <strong>Quantity:</strong> {product['Quantity']}<br>
                 <strong>Cost Price:</strong> ₹{product['Cost Price']}<br>
                 <strong>Selling Price:</strong> ₹{product['Selling Price']}<br>
-                <strong>Selling Per Product:</strong> ₹{product['Selling Per Product']}<br>
                 <strong>Date:</strong> {product['Date']}
             </div>
             """, unsafe_allow_html=True)
