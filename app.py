@@ -24,12 +24,10 @@ def train_model(data):
     
     # Check for empty DataFrame
     if X.empty or y.empty:
-     #   st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
-      #  st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
@@ -135,8 +133,7 @@ if 'add_sales' in st.session_state and st.session_state['add_sales']:
         
         save_sales_button = st.button('Save Sales')
         
-        if save_sales_button:
-            new_sale = {
+        if save_sales_button:             new_sale = {
                 'Product Name': product_name,
                 'Quantity Sold': quantity_sold,
                 'Selling Price': selected_product['Selling Price'],
@@ -216,3 +213,96 @@ if st.session_state['products']:
             st.markdown("**Per Product Earnings:**")
             for index, row in product_earnings.iterrows():
                 st.markdown(f"**{row['Product Name']}:** ₹{row['Profit']:.2f}")
+                
+            st.header("Product Ranking")
+            st.markdown("<strong>Top 5 Products by Profit:</strong>", unsafe_allow_html=True)
+            top_products = product_earnings.nlargest(5, 'Profit')
+            for index, row in top_products.iterrows():
+                st.markdown(f"**{row['Product Name']}:** ₹{row['Profit']:.2f}")
+
+            # Styling for the report
+            st.markdown("""
+            <style>
+            .report-section {
+                background-color: #162447;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                color: white;
+            }
+            .report-section:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .report-section h3 {
+                color: #ffab40;
+                font-size: 24px;
+            }
+            .report-section p {
+                color: white;
+                font-size: 18px;
+            }
+            .table-section {
+                background-color: #1b1b2f;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                color: white;
+            }
+            .table-section:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .table-section table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            .table-section th, .table-section td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            .table-section th {
+                background-color: #162447;
+                color: #ffab40;
+            }
+            .table-section td {
+                background-color: #1b1b2f;
+                color: white;
+            }
+            .table-section tr:nth-child(even) {
+                background-color: #1b1b2f;
+            }
+            .table-section tr:hover {
+                background-color: #162447;
+            }
+            .section-title {
+                font-size: 26px;
+                color: #ffab40;
+                margin-bottom: 20px;
+            }
+            .card {
+                background-color: #162447;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                margin-bottom: 20px;
+                color: white;
+                text-align: center;
+                font-size: 20px;
+            }
+            .card:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .card h4 {
+                color: #ffab40;
+                font-size: 22px;
+            }
+            .card p {
+                color: white;
+                font-size: 18px;
+            }
+            </style>
+            """, unsafe_allow_html=True)
