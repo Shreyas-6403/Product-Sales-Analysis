@@ -25,12 +25,12 @@ def train_model(data):
     
     # Check for empty DataFrame
     if X.empty or y.empty:
-        st.error("The data is insufficient for training the model. Please add more product data.")
+   #     st.error("The data is insufficient for training the model. Please add more product data.")
         return None
 
     # Train model using all data if not enough samples for a split
     if len(data) < 5:
-        st.warning("Insufficient data for train-test split. Training on entire dataset.")
+   #     st.warning("Insufficient data for train-test split. Training on entire dataset.")
         model = LinearRegression()
         model.fit(X, y)
     else:
@@ -64,13 +64,13 @@ def calculate_financials(data, sales_data):
     today_sales = pd.DataFrame(sales_data)
     today_sales['Date'] = pd.to_datetime(today_sales['Date'])
     today_data = today_sales[today_sales['Date'] == today]
-    today_data['Total'] = today_data['Quantity Sold'] * (today_data['Selling Price'])
+    today_data['Profit'] = today_data['Quantity Sold'] * (today_data['Selling Price'] - data.set_index('Name').loc[today_data['Product Name']]['Cost Price'].values)
 
-    total_profit = today_data[today_data['Total'] > 0]['Total'].sum()
-    total_loss = today_data[today_data['Total'] < 0]['Total'].sum()
+    total_profit = today_data[today_data['Profit'] > 0]['Profit'].sum()
+    total_loss = today_data[today_data['Profit'] < 0]['Profit'].sum()
     total_earnings = total_profit + total_loss
 
-    product_earnings = today_data.groupby('Product Name')['Total'].sum().reset_index()
+    product_earnings = today_data.groupby('Product Name')['Profit'].sum().reset_index()
 
     return total_profit, total_loss, total_earnings, product_earnings
 
@@ -193,14 +193,15 @@ if st.session_state['products']:
         df_products = pd.DataFrame(st.session_state['products'])
         df_sales = pd.DataFrame(st.session_state['sales'])
         
-        # Calculate combined earnings for the model
-        df_combined = df_sales.merge(df_products[['Name', 'Cost Price']], left_on='Product Name', right_on='Name')
-        df_combined['Earnings'] = df_combined['Quantity Sold'] * (df_combined['Selling Price'] - df_combined['Cost Price'])
+        # Calculate combined earnings
+        df_sales['Earnings'] = df_sales['Quantity Sold'] * df_sales['Selling Price']
         
-        # Prepare data for the model
-        df_combined = df_combined.rename(columns={'Date': 'Sale Date'})
+        # Combine products and sales data for model training
+        df_combined = df_sales[['Date', 'Earnings']].rename(columns={'Date': 'Sale Date'})
+        df_combined['Sale Date'] = pd.to_datetime(df_combined['Sale Date'])
+        df_combined = df_combined.resample('D', on='Sale Date').sum().reset_index()
         
-        # Train and predict
+        # Train the model and make predictions
         model = train_model(df_combined)
         if model:
             earnings_month = predict_earnings(model, 30)
@@ -312,7 +313,7 @@ if st.session_state['products']:
             <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
             <p><strong>Per Product Earnings:</strong></p>
             <ul>
-                {''.join([f"<li>{row['Product Name']}: ₹{row['Total']:.2f}</li>" for index, row in product_earnings.iterrows()])}
+                {''.join([f"<li>{row['Product Name']}: ₹{row['Profit']:.2f}</li>" for index, row in product_earnings.iterrows()])}
             </ul>
         </div>
         """, unsafe_allow_html=True)
