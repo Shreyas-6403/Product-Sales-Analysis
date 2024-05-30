@@ -202,124 +202,109 @@ if st.session_state['products']:
             earnings_month = predict_earnings_simple(total_earnings, 30)
             earnings_year = predict_earnings_simple(total_earnings, 365)
             
-            st.header("Sales Prediction")
-            st.markdown(f"**Sales after a month:** ₹{earnings_month:.2f}")
-            st.markdown(f"**Sales after a year:** ₹{earnings_year:.2f}")
-            
-            st.header("Financials")
-            st.markdown(f"**Today's Total Profit:** ₹{total_profit:.2f}")
-            st.markdown(f"**Today's Total Loss:** ₹{total_loss:.2f}")
-            st.markdown(f"**Today's Total Earnings:** ₹{total_earnings:.2f}")
-            
-            st.header("Product Earnings")
-            st.table(product_earnings)
-        else:
-            st.error("Model training failed due to insufficient data or data preparation issues.")
+            # Display the results in a styled format
+            st.markdown("""
+            <style>
+            .report-section {
+                background-color: #162447;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                color: white;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            .report-section:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .report-section h3 {
+                color: #ffab40;
+                font-size: 24px;
+            }
+            .report-section p {
+                color: white;
+                font-size: 18px;
+            }
+            .table-section {
+                background-color: #1b1b2f;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+                color: white;
+                margin-bottom: 20px;
+            }
+            .table-section:hover {
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            }
+            .table-section table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            .table-section th, .table-section td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+            .table-section th {
+                background-color: #162447;
+                color: #ffab40;
+            }
+            .table-section td {
+                background-color: #1b1b2f;
+                color: white;
+            }
+            .table-section tr:nth-child(even) {
+                background-color: #1b1b2f;
+            }
+            .table-section tr:hover {
+                background-color: #162447;
+            }
+            .section-title {
+                font-size: 26px;
+                color: #ffab40;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            </style>
+            """, unsafe_allow_html=True)
 
-# Display styled results
-st.markdown("""
-<style>
-.report-section {
-    background-color: #162447;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    color: white;
-    margin-bottom: 20px;
-    text-align: center;
-}
-.report-section:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-.report-section h3 {
-    color: #ffab40;
-    font-size: 24px;
-}
-.report-section p {
-    color: white;
-    font-size: 18px;
-}
-.table-section {
-    background-color: #1b1b2f;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    color: white;
-    margin-bottom: 20px;
-    text-align: center;
-}
-.table-section:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-}
-.table-section table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-.table-section th, .table-section td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-.table-section th {
-    background-color: #162447;
-    color: #ffab40;
-}
-.table-section td {
-    background-color: #1b1b2f;
-    color: white;
-}
-.table-section tr:nth-child(even) {
-    background-color: #1b1b2f;
-}
-.table-section tr:hover {
-    background-color: #162447;
-}
-.section-title {
-    font-size: 26px;
-    color: #ffab40;
-    margin-bottom: 20px;
-}
-</style>
-""", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="report-section">
+                <h3>Sales Prediction</h3>
+                <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
+                <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
+            </div>
+            <div class="report-section">
+                <h3>Financials</h3>
+                <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
+                <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
+                <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
+            </div>
+            <div class="table-section">
+                <div class="section-title">Per Product Earnings</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Profit (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            """, unsafe_allow_html=True)
 
-if 'total_earnings' in locals():
-    st.markdown(f"""
-    <div class="report-section">
-        <h3>Sales Prediction</h3>
-        <p><strong>Sales after a month:</strong> ₹{earnings_month:.2f}</p>
-        <p><strong>Sales after a year:</strong> ₹{earnings_year:.2f}</p>
-    </div>
-    <div class="report-section">
-        <h3>Financials</h3>
-        <p><strong>Today's Total Profit:</strong> ₹{total_profit:.2f}</p>
-        <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
-        <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
-    </div>
-    <div class="table-section">
-        <div class="section-title">Product Earnings</div>
-        <table>
-            <thead>
+            for index, row in product_earnings.iterrows():
+                st.markdown(f"""
                 <tr>
-                    <th>Product Name</th>
-                    <th>Profit (₹)</th>
+                    <td>{row['Product Name']}</td>
+                    <td>₹{row['Profit']:.2f}</td>
                 </tr>
-            </thead>
-            <tbody>
-    """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
 
-    for index, row in product_earnings.iterrows():
-        st.markdown(f"""
-        <tr>
-            <td>{row['Product Name']}</td>
-            <td>₹{row['Profit']:.2f}</td>
-        </tr>
-        """, unsafe_allow_html=True)
-
-    st.markdown("""
-            </tbody>
-        </table>
-    </div>
-    """, unsafe_allow_html=True)
+            st.markdown("""
+                    </tbody>
+                </table>
+            </div>
+            """, unsafe_allow_html=True)
