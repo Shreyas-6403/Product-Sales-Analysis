@@ -289,7 +289,7 @@ if st.session_state['products']:
                     <thead>
                         <tr>
                             <th>Product Name</th>
-                            <th>Quantity Sold</th>
+                            <th>Profit (₹)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -299,7 +299,7 @@ if st.session_state['products']:
                 st.markdown(f"""
                 <tr>
                     <td>{row['Product Name']}</td>
-                    <td>{row['Quantity Sold']:.2f}</td>
+                    <td>₹{row['Profit']:.2f}</td>
                 </tr>
                 """, unsafe_allow_html=True)
 
