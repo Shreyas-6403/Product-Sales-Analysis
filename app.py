@@ -212,6 +212,8 @@ if st.session_state['products']:
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease;
                 color: white;
+                margin-bottom: 20px;
+                text-align: center;
             }
             .report-section:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -231,6 +233,7 @@ if st.session_state['products']:
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 transition: all 0.3s ease;
                 color: white;
+                margin-bottom: 20px;
             }
             .table-section:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -263,28 +266,7 @@ if st.session_state['products']:
                 font-size: 26px;
                 color: #ffab40;
                 margin-bottom: 20px;
-            }
-            .card {
-                background-color: #162447;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-                margin-bottom: 20px;
-                color: white;
                 text-align: center;
-                font-size: 20px;
-            }
-            .card:hover {
-                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            }
-            .card h4 {
-                color: #ffab40;
-                font-size: 22px;
-            }
-            .card p {
-                color: white;
-                font-size: 18px;
             }
             </style>
             """, unsafe_allow_html=True)
@@ -304,10 +286,13 @@ if st.session_state['products']:
             <div class="table-section">
                 <div class="section-title">Per Product Earnings</div>
                 <table>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Profit (₹)</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Profit (₹)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
             """, unsafe_allow_html=True)
 
             for index, row in product_earnings.iterrows():
@@ -319,6 +304,7 @@ if st.session_state['products']:
                 """, unsafe_allow_html=True)
 
             st.markdown("""
+                    </tbody>
                 </table>
             </div>
             """, unsafe_allow_html=True)
