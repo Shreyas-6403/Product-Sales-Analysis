@@ -213,7 +213,6 @@ if st.session_state['products']:
                 transition: all 0.3s ease;
                 color: white;
                 margin-bottom: 20px;
-                text-align: center;
             }
             .report-section:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -221,10 +220,11 @@ if st.session_state['products']:
             .report-section h3 {
                 color: #ffab40;
                 font-size: 24px;
+                margin-bottom: 15px;
             }
             .report-section p {
-                color: white;
                 font-size: 18px;
+                margin: 5px 0;
             }
             .table-section {
                 background-color: #1b1b2f;
@@ -234,7 +234,7 @@ if st.session_state['products']:
                 transition: all 0.3s ease;
                 color: white;
                 margin-bottom: 20px;
-                overflow-x: auto;
+                overflow: hidden;
             }
             .table-section:hover {
                 box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -243,11 +243,13 @@ if st.session_state['products']:
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
+                table-layout: fixed;
             }
             .table-section th, .table-section td {
                 padding: 15px;
                 text-align: left;
                 border-bottom: 1px solid #ddd;
+                word-wrap: break-word;
             }
             .table-section th {
                 background-color: #162447;
@@ -297,15 +299,17 @@ if st.session_state['products']:
             """, unsafe_allow_html=True)
 
             for index, row in product_earnings.iterrows():
-          #      st.markdown(f"""
-           #     <tr>
-            #        <td>{row['Product Name']}</td>
-             #       <td>₹{row['Profit']:.2f}</td>
-              #  </tr>
-               # """, unsafe_allow_html=True)
+                st.markdown(f"""
+                <tr>
+                    <td>{row['Product Name']}</td>
+                    <td>₹{row['Profit']:.2f}</td>
+                </tr>
+                """, unsafe_allow_html=True)
 
             st.markdown("""
                     </tbody>
                 </table>
             </div>
             """, unsafe_allow_html=True)
+        else:
+            st.warning("Not enough data to make predictions.")
