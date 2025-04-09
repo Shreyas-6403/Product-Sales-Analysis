@@ -289,20 +289,21 @@ if st.session_state['products']:
                 <p><strong>Today's Total Loss:</strong> ₹{total_loss:.2f}</p>
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
             </div>
-            <div class="table-section">
             st.markdown("""
-    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-    <table>
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Profit (₹)</th>
-            </tr>
-        </thead>
-        <tbody>
+            <div class="table-section">
+            <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Profit (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
 """, unsafe_allow_html=True)
 
-for index, row in top_5_products.iterrows():
+# Loop to populate rows
+for _, row in top_5_products.iterrows():
     st.markdown(f"""
         <tr>
             <td>{row['Product Name']}</td>
@@ -310,8 +311,10 @@ for index, row in top_5_products.iterrows():
         </tr>
     """, unsafe_allow_html=True)
 
+# Close the table
 st.markdown("""
         </tbody>
     </table>
 </div>
 """, unsafe_allow_html=True)
+
