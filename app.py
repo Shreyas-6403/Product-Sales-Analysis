@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 import pandas as pd
 from datetime import datetime
 from sklearn.linear_model import LinearRegression
@@ -61,7 +62,16 @@ def calculate_financials(data, sales_data):
     total_earnings = total_profit + total_loss
 
     product_earnings = today_data.groupby('Product Name')['Profit'].sum().reset_index()
+    
+    if not product_earnings.empty:
+        fig = px.bar(product_earnings.sort_values(by='Profit', ascending=False).head(5),
+                 x='Product Name', y='Profit',
+                 color='Profit', 
+                 title='Top 5 Profitable Products',
+                 text_auto='.2s')
+        st.plotly_chart(fig, use_container_width=True)
 
+    
     return total_profit, total_loss, total_earnings, product_earnings
 
 # Display image and title side by side
