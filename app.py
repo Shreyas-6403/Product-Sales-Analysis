@@ -70,11 +70,6 @@ def calculate_financials(data, sales_data):
                  title='Top 5 Profitable Products',
                  text_auto='.2s')
         st.plotly_chart(fig, use_container_width=True)
-
-    df_combined['Sale Date'] = pd.to_datetime(df_combined['Sale Date'])
-    fig2 = px.line(df_combined, x='Sale Date', y='Earnings', title='Daily Earnings Over Time')
-    st.plotly_chart(fig2, use_container_width=True)
-
     return total_profit, total_loss, total_earnings, product_earnings
 
 # Display image and title side by side
