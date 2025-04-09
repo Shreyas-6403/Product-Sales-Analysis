@@ -302,36 +302,36 @@ if st.session_state['products']:
             """, unsafe_allow_html=True)
 
 # Start table HTML
-table_html = f"""
-<div class="table-section">
-    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-    <table>
+table_html = """
+<div style="margin-top: 20px;">
+    <h3 style="color: orange;">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
+    <table style="width: 100%; border-collapse: collapse; background-color: #121225;">
         <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Profit (₹)</th>
+            <tr style="background-color: #1a2341; color: orange;">
+                <th style="padding: 10px; border: 1px solid #ccc;">Product Name</th>
+                <th style="padding: 10px; border: 1px solid #ccc;">Profit (₹)</th>
             </tr>
         </thead>
         <tbody>
 """
 
-# Generate rows dynamically
+# Dynamically generate rows
 for index, row in product_earnings.iterrows():
     table_html += f"""
         <tr>
-            <td>{row['Product Name']}</td>
-            <td>₹{row['Profit']:.2f}</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">{row['Product Name']}</td>
+            <td style="padding: 10px; border: 1px solid #ccc;">₹{row['Profit']:.2f}</td>
         </tr>
     """
 
-# End table HTML
+# Close HTML
 table_html += """
         </tbody>
     </table>
 </div>
 """
 
-# Render it
+# ✅ This is the key — render using markdown with unsafe_allow_html
 st.markdown(table_html, unsafe_allow_html=True)
 
 
