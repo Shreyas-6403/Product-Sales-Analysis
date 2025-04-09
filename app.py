@@ -307,7 +307,7 @@ if st.session_state['products']:
                 st.markdown(f"""
                     <tr>
                         <td>{row['Product Name']}</td>
-                        <td>₹{row['Profit']:,.2f}</td>
+                        <td>{row['Profit']:,.2f}</td>
                     </tr>
                 """, unsafe_allow_html=True)
 
