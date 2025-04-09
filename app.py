@@ -296,6 +296,8 @@ if st.session_state['products']:
                     <tr>
                         <th>Product Name</th>
                         <th>Profit (₹)</th>
+                        <td>row['Product Name']}</td>
+                        <td>₹{row['Profit']:.2f}</td>
                     </tr>
                 </thead>
             <tbody>
