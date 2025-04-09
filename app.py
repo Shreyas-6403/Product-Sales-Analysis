@@ -301,40 +301,4 @@ if st.session_state['products']:
             <tbody>
             """, unsafe_allow_html=True)
 
-        # Prepare top 5 products by profit
-        top_products = product_earnings.sort_values(by="Profit", ascending=False).head(5)
-
-        # Build full HTML for table including rows
-        full_table_html = """
-        <div class="table-section">
-            <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Profit (₹)</th>
-                    </tr>
-                </thead>
-                <tbody>
-        """
-
-        # Dynamically append each product row
-        for _, row in top_products.iterrows():
-            full_table_html += f"""
-                    <tr>
-                        <td>{row['Product Name']}</td>
-                        <td>₹{row['Profit']:.2f}</td>
-                    </tr>
-            """
-
-        # Finish the table
-        full_table_html += """
-                </tbody>
-            </table>
-        </div>
-        """
-
-        # Finally, render it all at once
-        st.markdown(full_table_html, unsafe_allow_html=True)
-
 
