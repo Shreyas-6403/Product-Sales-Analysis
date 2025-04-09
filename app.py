@@ -311,22 +311,18 @@ if st.session_state['products']:
                     <tbody>
             """, unsafe_allow_html=True)
 
-            # Add rows dynamically (LIMIT 5)
+            # Build table rows in a single string
+            rows_html = ""
             for _, row in product_earnings.sort_values(by='Profit', ascending=False).head(5).iterrows():
-                st.markdown(
-                    f"""<tr>
+                rows_html += f"""
+                    <tr>
                         <td>{row['Product Name']}</td>
                         <td>&#8377;{row['Profit']:,.2f}</td>
-                    </tr>""",
-                unsafe_allow_html=True
-            )
+                    </tr>
+            """
 
-        # Close table HTML
-        st.markdown("""
-                </tbody>
-            </table>
-        </div>
-        """, unsafe_allow_html=True)
+            # Inject inside the existing table block
+            st.markdown(rows_html, unsafe_allow_html=True)
 
         # EDA: Quantity Sold Pie Chart
         if not df_sales.empty:
