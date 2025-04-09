@@ -303,38 +303,38 @@ if st.session_state['products']:
 
         # Insert the top 5 product rows based on profit
         # Prepare top 5 products by profit
-top_products = product_earnings.sort_values(by="Profit", ascending=False).head(5)
+        top_products = product_earnings.sort_values(by="Profit", ascending=False).head(5)
 
-# Start building HTML table
-table_html = """
-<div class="table-section">
-    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-    <table>
-        <thead>
-            <tr>
+        # Start building HTML table
+        table_html = """
+        <div class="table-section">
+            <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+            <table>
+                <thead>
+                <tr>
                 <th>Product Name</th>
                 <th>Profit (₹)</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
+                </tr>
+            </thead>
+            <tbody>
+        """
 
-# Add rows for top products
-for _, row in top_products.iterrows():
-    table_html += f"""
-            <tr>
+        # Add rows for top products
+        for _, row in top_products.iterrows():
+            table_html += f"""
+                <tr>
                 <td>{row['Product Name']}</td>
                 <td>₹{row['Profit']:.2f}</td>
-            </tr>
-    """
+                </tr>
+            """
 
-# Close table HTML
-table_html += """
+        # Close table HTML
+        table_html += """
         </tbody>
-    </table>
-</div>
-"""
+        </table>
+        </div>
+        """
 
-# Display entire table in one go
-st.markdown(table_html, unsafe_allow_html=True)
+        # Display entire table in one go
+        st.markdown(table_html, unsafe_allow_html=True)
 
