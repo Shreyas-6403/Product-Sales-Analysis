@@ -290,8 +290,10 @@ if st.session_state['products']:
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
             </div>
             """, unsafe_allow_html=True)
+            
             # Build complete HTML string for the table
             top5 = product_earnings.sort_values(by='Profit', ascending=False).head(5)
+            
             table_html = """
             <div class="table-section">
                 <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
@@ -306,12 +308,10 @@ if st.session_state['products']:
             """
             # Append each row properly
             for _, row in top5.iterrows():
-                product = row['Product Name']
-                profit = f"{row['Profit']:,.2f}"
                 table_html += f"""
                     <tr>
-                        <td>{product}</td>
-                        <td>&#8377;{profit}</td>
+                        <td>{row['Product Name']}</td>
+                        <td>&#8377;{row['Profit']:,.2f}</td>
                     </tr>
                 """
             # Close the table
