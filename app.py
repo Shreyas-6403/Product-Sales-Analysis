@@ -309,6 +309,8 @@ if st.session_state['products']:
             
             # Append each row properly
             for _, row in top5.iterrows():
+                product=row['Product Name']
+                profit=f"{row['Profit']:,.2f}"
                 table_html += f"""
                         <tr>
                             <td>{row['Product Name']}</td>
