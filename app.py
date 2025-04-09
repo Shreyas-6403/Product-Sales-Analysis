@@ -295,24 +295,25 @@ if st.session_state['products']:
             top5 = product_earnings.sort_values(by='Profit', ascending=False).head(5)
             
             table_html = """
-                <div class="table-section">
-                    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Profit (&#8377;)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div class="table-section">
+                <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Profit (&#8377;)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
             """
+            
             # Append each row properly
             for _, row in top5.iterrows():
                 table_html += f"""
-                            <tr>
-                                <td>{row['Product Name']}</td>
-                                <td>&#8377;{row['Profit']:,.2f}</td>
-                            </tr>
+                        <tr>
+                            <td>{row['Product Name']}</td>
+                            <td>&#8377;{row['Profit']:,.2f}</td>
+                        </tr>
                 """
             # Close the table
             table_html += """
