@@ -306,12 +306,10 @@ if st.session_state['products']:
                     </thead>
                     <tbody>
             """
-            
             # Append each row properly
             for _, row in top5.iterrows():
                 product = row['Product Name']
                 profit = f"{row['Profit']:,.2f}"
-                
                 table_html += f"""
                         <tr>
                             <td>{product}</td>
@@ -320,9 +318,9 @@ if st.session_state['products']:
                 """
             # Close the table
             table_html += """
-                        </tbody>
-                    </table>
-                </div>
+                    </tbody>
+                </table>
+            </div>
             """
             # Render all at once in Streamlit
             st.markdown(table_html, unsafe_allow_html=True)
