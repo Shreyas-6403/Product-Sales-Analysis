@@ -70,14 +70,14 @@ def calculate_financials(data, sales_data):
                  title='Top 5 Profitable Products',
                  text_auto='.2s')
         st.plotly_chart(fig, use_container_width=True)
-    return total_profit, total_loss, total_earnings, product_earnings
 
     if not df_sales.empty:
     sales_qty = df_sales.groupby('Product Name')['Quantity Sold'].sum().reset_index()
     fig4 = px.pie(sales_qty, names='Product Name', values='Quantity Sold', 
                   title='Quantity Sold Distribution by Product')
     st.plotly_chart(fig4, use_container_width=True)
-
+    
+    return total_profit, total_loss, total_earnings, product_earnings
 
 # Display image and title side by side
 col1, col2 = st.columns([1, 3])
