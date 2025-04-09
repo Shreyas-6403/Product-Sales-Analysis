@@ -184,7 +184,13 @@ if st.session_state['products']:
         df_sales = pd.DataFrame(st.session_state['sales'])
         
         # Calculate combined earnings
-        df_sales['Earnings'] = df_sales['Quantity Sold'] * df_sales['Selling Price']
+        #df_sales['Earnings'] = df_sales['Quantity Sold'] * df_sales['Selling Price']
+
+        if 'Quantity Sold' in df_sales.columns and 'Selling Price' in df_sales.columns:
+            df_sales['Earnings'] = df_sales['Quantity Sold'] * df_sales['Selling Price']
+        else:
+            st.error("Sales data is missing 'Quantity Sold' or 'Selling Price'. Please ensure sales entries are complete.")
+            st.stop()
         
         # Combine products and sales data for model training
         df_combined = df_sales[['Date', 'Earnings']].rename(columns={'Date': 'Sale Date'})
