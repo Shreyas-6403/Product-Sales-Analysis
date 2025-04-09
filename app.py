@@ -295,16 +295,16 @@ if st.session_state['products']:
             top5 = product_earnings.sort_values(by='Profit', ascending=False).head(5)
             
             table_html = """
-            <div class="table-section">
-                <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Profit (&#8377;)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <div class="table-section">
+                    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Profit (&#8377;)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
             """
             # Append each row properly
             for _, row in top5.iterrows():
@@ -316,9 +316,9 @@ if st.session_state['products']:
                 """
             # Close the table
             table_html += """
-                    </tbody>
-                </table>
-            </div>
+                        </tbody>
+                    </table>
+                </div>
             """
             # Render all at once in Streamlit
             st.markdown(table_html, unsafe_allow_html=True)
