@@ -323,8 +323,8 @@ if st.session_state['products']:
         for _, row in top_products.iterrows():
             table_html += f"""
                 <tr>
-                <td>{row['Product Name']}</td>
-                <td>₹{row['Profit']:.2f}</td>
+                    <td>{row['Product Name']}</td>
+                    <td>₹{row['Profit']:.2f}</td>
                 </tr>
             """
 
