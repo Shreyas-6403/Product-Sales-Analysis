@@ -292,39 +292,41 @@ if st.session_state['products']:
             """, unsafe_allow_html=True)
             
             # Build complete HTML string for the table
-            top5 = product_earnings.sort_values(by='Profit', ascending=False).head(5)
+top5 = product_earnings.sort_values(by='Profit', ascending=False).head(5)
 
-            table_html = f"""
-            <div class="table-section">
-                <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Profit (&#8377;)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            """
+table_html = """
+<div class="table-section">
+    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Profit (&#8377;)</th>
+            </tr>
+        </thead>
+        <tbody>
+"""
 
-            # Append each row
-            for _, row in top5.iterrows():
-                table_html += f"""
-                    <tr>
-                        <td>{row['Product Name']}</td>
-                        <td>&#8377;{row['Profit']:,.2f}</td>
-                    </tr>
-            """
+# Append each row properly
+for _, row in top5.iterrows():
+    product = row['Product Name']
+    profit = f"{row['Profit']:,.2f}"
+    table_html += f"""
+            <tr>
+                <td>{product}</td>
+                <td>&#8377;{profit}</td>
+            </tr>
+    """
 
-            # Finish the table HTML
-            table_html += """
-                    </tbody>
-                </table>
-            </div>
-            """
+# Close the table
+table_html += """
+        </tbody>
+    </table>
+</div>
+"""
 
-            # Render the full table in one go
-            st.markdown(table_html, unsafe_allow_html=True)
+# Render all at once in Streamlit
+st.markdown(table_html, unsafe_allow_html=True)
 
 
 
