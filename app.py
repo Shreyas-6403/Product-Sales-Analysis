@@ -298,23 +298,23 @@ if st.session_state['products']:
             top_products_html = f"""
             <div class="table-section">
                 <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Profit (&#8377;)</th>
-                            </tr>
-                        </thead>
-                    <tbody>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Profit (&#8377;)</th>
+                        </tr>
+                    </thead>
+                <tbody>
             """
 
             # Add each product row
             for _, row in top5.iterrows():
                 top_products_html += f"""
-                    <tr>
-                        <td>{row['Product Name']}</td>
-                        <td>&#8377;{row['Profit']:,.2f}</td>
-                    </tr>
+                        <tr>
+                            <td>{row['Product Name']}</td>
+                            <td>&#8377;{row['Profit']:,.2f}</td>
+                        </tr>
                 """
 
             # Close the HTML
