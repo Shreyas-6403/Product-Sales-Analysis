@@ -307,7 +307,7 @@ for _, row in top_5_products.iterrows():
     st.markdown(f"""
         <tr>
             <td>{row['Product Name']}</td>
-            <td>₹{row['Profit']:,.2f}</td>
+            f"<td>₹{row['Profit']:,.2f}</td>"
         </tr>
     """, unsafe_allow_html=True)
 
