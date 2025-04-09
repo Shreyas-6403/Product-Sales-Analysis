@@ -300,39 +300,3 @@ if st.session_state['products']:
                     </thead>
                     <tbody>
             """, unsafe_allow_html=True)
-
-# Start table HTML
-table_html = """
-<div style="margin-top: 20px;">
-    <h3 style="color: orange;">Top Rated Products & Customer Satisfaction (Top 5 Products)</h3>
-    <table style="width: 100%; border-collapse: collapse; background-color: #121225;">
-        <thead>
-            <tr style="background-color: #1a2341; color: orange;">
-                <th style="padding: 10px; border: 1px solid #ccc;">Product Name</th>
-                <th style="padding: 10px; border: 1px solid #ccc;">Profit (₹)</th>
-            </tr>
-        </thead>
-        <tbody>
-"""
-
-# Dynamically generate rows
-for index, row in product_earnings.iterrows():
-    table_html += f"""
-        <tr>
-            <td style="padding: 10px; border: 1px solid #ccc;">{row['Product Name']}</td>
-            <td style="padding: 10px; border: 1px solid #ccc;">₹{row['Profit']:.2f}</td>
-        </tr>
-    """
-
-# Close HTML
-table_html += """
-        </tbody>
-    </table>
-</div>
-"""
-
-# ✅ This is the key — render using markdown with unsafe_allow_html
-st.markdown(table_html, unsafe_allow_html=True)
-
-
-
