@@ -296,7 +296,7 @@ if st.session_state['products']:
                 <thead>
                     <tr>
                         <th>Product Name</th>
-                        <th>Profit (₹)</th>
+                        <th>Profit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -317,5 +317,3 @@ if st.session_state['products']:
             </table>
             </div>
             """, unsafe_allow_html=True)
-
-
