@@ -291,11 +291,10 @@ if st.session_state['products']:
             </div>
             """, unsafe_allow_html=True)
             
-            # Sort and prepare top 5 products
+            # Build complete HTML string for the table
             top5 = product_earnings.sort_values(by='Profit', ascending=False).head(5)
 
-            # Start full HTML content for table
-            top_products_html = f"""
+            table_html = f"""
             <div class="table-section">
                 <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
                 <table>
@@ -305,26 +304,27 @@ if st.session_state['products']:
                             <th>Profit (&#8377;)</th>
                         </tr>
                     </thead>
-                <tbody>
+                    <tbody>
             """
 
-            # Add each product row
+            # Append each row
             for _, row in top5.iterrows():
-                top_products_html += f"""
-                        <tr>
-                            <td>{row['Product Name']}</td>
-                            <td>&#8377;{row['Profit']:,.2f}</td>
-                        </tr>
-                """
+                table_html += f"""
+                    <tr>
+                        <td>{row['Product Name']}</td>
+                        <td>&#8377;{row['Profit']:,.2f}</td>
+                    </tr>
+            """
 
-            # Close the HTML
-            top_products_html += """
-                     </tbody>
+            # Finish the table HTML
+            table_html += """
+                    </tbody>
                 </table>
             </div>
             """
 
             # Render the full table in one go
-            st.markdown(top_products_html, unsafe_allow_html=True)
+            st.markdown(table_html, unsafe_allow_html=True)
+
 
 
