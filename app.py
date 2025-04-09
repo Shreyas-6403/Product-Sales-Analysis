@@ -301,24 +301,37 @@ if st.session_state['products']:
                     <tbody>
             """, unsafe_allow_html=True)
 
-            # Start table HTML
+# Start table HTML
 table_html = """
 </tbody>
 </table>
 </div>
 """
 
+# Append all rows
 for index, row in product_earnings.iterrows():
-    st.markdown(f"""
-    <tr>
-        <td>{row['Product Name']}</td>
-        <td>₹{row['Profit']:.2f}</td>
-    </tr>
-    """, unsafe_allow_html=True)
+    table_html = f"""
+        <tr>
+            <td>{row['Product Name']}</td>
+            <td>₹{row['Profit']:.2f}</td>
+        </tr>
+    """ + table_html
 
-st.markdown("""
-        </tbody>
-    </table>
-</div>
-""", unsafe_allow_html=True)
+# Add header and wrap up full HTML table
+table_html = f"""
+<div class="table-section">
+    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+    <table>
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Profit (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+{table_html}
+"""
+
+st.markdown(table_html, unsafe_allow_html=True)
+
 
