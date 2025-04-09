@@ -290,17 +290,32 @@ if st.session_state['products']:
                 <p><strong>Today's Total Earnings:</strong> ₹{total_earnings:.2f}</p>
             </div>
             <div class="table-section">
-            <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product Name</th>
-                        <th>Profit (₹)</th>
-                        <td>row['Product Name']}</td>
-                        <td>₹{row['Profit']:.2f}</td>
-                    </tr>
-                </thead>
-            <tbody>
-            """, unsafe_allow_html=True)
+            st.markdown("""
+<div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+<table>
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Profit (₹)</th>
+        </tr>
+    </thead>
+    <tbody>
+""", unsafe_allow_html=True)
+
+# Then this part dynamically renders each row
+for index, row in top_5_products.iterrows():
+    st.markdown(f"""
+        <tr>
+            <td>{row['Product Name']}</td>
+            <td>₹{row['Profit']:,.2f}</td>
+        </tr>
+    """, unsafe_allow_html=True)
+
+# Finally, close it
+st.markdown("""
+    </tbody>
+</table>
+</div>
+""", unsafe_allow_html=True)
 
 
