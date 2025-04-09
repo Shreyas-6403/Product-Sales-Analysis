@@ -309,29 +309,32 @@ table_html = """
 """
 
 # Append all rows
-for index, row in product_earnings.iterrows():
-    table_html = f"""
-        <tr>
-            <td>{row['Product Name']}</td>
-            <td>₹{row['Profit']:.2f}</td>
-        </tr>
-    """ + table_html
-
-# Add header and wrap up full HTML table
-table_html = f"""
-<div class="table-section">
-    <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
-    <table>
-        <thead>
+if product_earnings is not None and not product_earnings.empty:
+    table_html = ""
+    for index, row in product_earnings.iterrows():
+        table_html += f"""
             <tr>
-                <th>Product Name</th>
-                <th>Profit (₹)</th>
+                <td>{row['Product Name']}</td>
+                <td>₹{row['Profit']:.2f}</td>
             </tr>
-        </thead>
-        <tbody>
-{table_html}
-"""
+        """
 
-st.markdown(table_html, unsafe_allow_html=True)
+    full_table = f"""
+    <div class="table-section">
+        <div class="section-title">Top Rated Products & Customer Satisfaction (Top 5 Products)</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Profit (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {table_html}
+            </tbody>
+        </table>
+    </div>
+    """
+    st.markdown(full_table, unsafe_allow_html=True)
 
 
