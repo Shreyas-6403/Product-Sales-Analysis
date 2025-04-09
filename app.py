@@ -309,10 +309,10 @@ if st.session_state['products']:
             # Append each row properly
             for _, row in top5.iterrows():
                 table_html += f"""
-                    <tr>
-                        <td>{row['Product Name']}</td>
-                        <td>&#8377;{row['Profit']:,.2f}</td>
-                    </tr>
+                            <tr>
+                                <td>{row['Product Name']}</td>
+                                <td>&#8377;{row['Profit']:,.2f}</td>
+                            </tr>
                 """
             # Close the table
             table_html += """
