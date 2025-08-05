@@ -130,7 +130,7 @@ pytest
 
 ### 🔹 Home Screen
 
-![Home Screen](https://blogger.googleusercontent.com/img/a/AVvXsEh5v3sCzgyYpeeEA3wiLCRU_8tLNSIM2KDp-ljFODgg4JcfM5J5z7okUO_ZXiHRjxxG4NWgMHmwcMe9_TlO4RfDTwRzTyomVlO5tW56ILnRnUSuLazmXiF6NWe6Qf1nMbxDuGAiuGmntl9zZ5Ak_NqDVAxSlDfWsu4D2TqYQVLrpDTEswi0ZSNw87id_SzJ=w372-h349)
+<p align="center"> <img src="https://blogger.googleusercontent.com/img/a/AVvXsEh5v3sCzgyYpeeEA3wiLCRU_8tLNSIM2KDp-ljFODgg4JcfM5J5z7okUO_ZXiHRjxxG4NWgMHmwcMe9_TlO4RfDTwRzTyomVlO5tW56ILnRnUSuLazmXiF6NWe6Qf1nMbxDuGAiuGmntl9zZ5Ak_NqDVAxSlDfWsu4D2TqYQVLrpDTEswi0ZSNw87id_SzJ=w372-h349" alt="Home Screen" width="400"/> </p>
 
 ### 🔹 Sales Report View
 
