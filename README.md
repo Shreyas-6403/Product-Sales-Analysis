@@ -141,13 +141,6 @@ pytest
 ![Insights](https://blogger.googleusercontent.com/img/a/AVvXsEjUedbNOtHFyu-ZFPk70CHS-HtVpAUFcXA9XBQuVxeK0wbrwdRUm3xNmch80ebGUx7uf12hR-Fa7kUcoFL7BhGWfrSkZBwNzXrNGlKcKuZYucmoRyONbb7OjoqzjdYCKaBbkP38dAjXj9kJiud_DvfJK467lUg22j3tOBqqYOPiyxREiybAKX80ZB7kv1gk=w390-h314)
 
 ---
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
 ## 🙋‍♂️ Author
 
 **Shreyas Kulkarni**  
