@@ -134,11 +134,11 @@ pytest
 
 ### 🔹 Sales Report View
 
-![Sales Report](https://blogger.googleusercontent.com/img/a/AVvXsEivMWaPapDogBYRXjmkfROBfqWVtb6ajMeNSgCtd0BfQZyXxHkTra2Hn0Lj9RiiuBkjU40nL3XvqpcS0uzpJrYlGdu1Roxvu3gFC1liTqlqaui_7Sf-JHM86ysYqoWVZuGi7QOCq8B1dvXeFF0s9ypLeiNBIa7qfFOJOawHk8RLHqnYvlS6uk5QHCS-8r_O=w383-h238)
+<p align="center"> <img src="https://blogger.googleusercontent.com/img/a/AVvXsEivMWaPapDogBYRXjmkfROBfqWVtb6ajMeNSgCtd0BfQZyXxHkTra2Hn0Lj9RiiuBkjU40nL3XvqpcS0uzpJrYlGdu1Roxvu3gFC1liTqlqaui_7Sf-JHM86ysYqoWVZuGi7QOCq8B1dvXeFF0s9ypLeiNBIa7qfFOJOawHk8RLHqnYvlS6uk5QHCS-8r_O=w383-h238" alt="Sales Report" width="400"/> </p>
 
 ### 🔹 Insights Dashboard
 
-![Insights](https://blogger.googleusercontent.com/img/a/AVvXsEjUedbNOtHFyu-ZFPk70CHS-HtVpAUFcXA9XBQuVxeK0wbrwdRUm3xNmch80ebGUx7uf12hR-Fa7kUcoFL7BhGWfrSkZBwNzXrNGlKcKuZYucmoRyONbb7OjoqzjdYCKaBbkP38dAjXj9kJiud_DvfJK467lUg22j3tOBqqYOPiyxREiybAKX80ZB7kv1gk=w390-h314)
+<p align="center"> <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjUedbNOtHFyu-ZFPk70CHS-HtVpAUFcXA9XBQuVxeK0wbrwdRUm3xNmch80ebGUx7uf12hR-Fa7kUcoFL7BhGWfrSkZBwNzXrNGlKcKuZYucmoRyONbb7OjoqzjdYCKaBbkP38dAjXj9kJiud_DvfJK467lUg22j3tOBqqYOPiyxREiybAKX80ZB7kv1gk=w390-h314" alt="Insights Dashboard" width="400"/> </p>
 
 ---
 ## 🙋‍♂️ Author
