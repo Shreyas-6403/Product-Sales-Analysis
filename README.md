@@ -27,8 +27,6 @@ ProductSalesAnalysis is an intelligent Streamlit-powered analytics platform that
 - [Configuration](#configuration)
 - [Testing](#testing)
 - [Screenshots](#screenshots)
-- [License](#license)
-
 ---
 
 ## 🧠 Overview
