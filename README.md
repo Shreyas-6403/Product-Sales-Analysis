@@ -72,10 +72,10 @@ Clone the repository and install dependencies:
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/Shreyas-6403/ProductSalesAnalysis.git
+git clone https://github.com/Shreyas-6403/Product-Sales-Analysis.git
 
 # 2. Navigate to project directory
-cd ProductSalesAnalysis
+cd Product-Sales-Analysis
 
 # 3. Install requirements
 pip install -r requirements.txt
@@ -139,12 +139,6 @@ pytest
 ### 🔹 Insights Dashboard
 
 <p align="center"> <img src="https://blogger.googleusercontent.com/img/a/AVvXsEjUedbNOtHFyu-ZFPk70CHS-HtVpAUFcXA9XBQuVxeK0wbrwdRUm3xNmch80ebGUx7uf12hR-Fa7kUcoFL7BhGWfrSkZBwNzXrNGlKcKuZYucmoRyONbb7OjoqzjdYCKaBbkP38dAjXj9kJiud_DvfJK467lUg22j3tOBqqYOPiyxREiybAKX80ZB7kv1gk=w390-h314" alt="Insights Dashboard" width="400"/> </p>
-
----
-## 🙋‍♂️ Author
-
-**Shreyas Kulkarni**  
-Connect on [LinkedIn](https://www.linkedin.com/in/shreyas-kulkarni-dev)
 
 ---
 
